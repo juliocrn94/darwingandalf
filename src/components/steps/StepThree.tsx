@@ -1,121 +1,218 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Globe, FileText, AlertCircle, CheckCircle2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Progress } from "@/components/ui/progress";
+import { Edit2, Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-export const StepThree = ({ onNext }: { onNext: () => void }) => {
-  const [url, setUrl] = useState("");
-  const [isAdapting, setIsAdapting] = useState(false);
-  const [progress, setProgress] = useState(0);
+interface FlowNode {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+  type: "start" | "action" | "end";
+}
 
-  const handleAdapt = () => {
-    setIsAdapting(true);
-    setProgress(0);
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsAdapting(false);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 300);
+interface FlowConnection {
+  from: string;
+  to: string;
+}
+
+const initialNodes: FlowNode[] = [
+  { id: "1", label: "internal_assistant", x: 200, y: 50, type: "start" },
+  { id: "2", label: "membership_flow", x: 100, y: 150, type: "action" },
+  { id: "3", label: "transfer", x: 200, y: 150, type: "action" },
+  { id: "4", label: "plan_data", x: 300, y: 150, type: "action" },
+  { id: "5", label: "close_sales", x: 100, y: 250, type: "action" },
+  { id: "6", label: "plan_confirmation", x: 300, y: 250, type: "action" },
+  { id: "7", label: "faq", x: 100, y: 350, type: "end" },
+];
+
+const initialConnections: FlowConnection[] = [
+  { from: "1", to: "2" },
+  { from: "1", to: "3" },
+  { from: "1", to: "4" },
+  { from: "2", to: "5" },
+  { from: "4", to: "6" },
+  { from: "5", to: "7" },
+];
+
+export const StepThree = () => {
+  const [nodes, setNodes] = useState<FlowNode[]>(initialNodes);
+  const [connections] = useState<FlowConnection[]>(initialConnections);
+  const [editingNode, setEditingNode] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
+
+  const handleEditNode = (nodeId: string, currentLabel: string) => {
+    setEditingNode(nodeId);
+    setEditValue(currentLabel);
+  };
+
+  const handleSaveEdit = (nodeId: string) => {
+    setNodes(nodes.map(node => 
+      node.id === nodeId ? { ...node, label: editValue } : node
+    ));
+    setEditingNode(null);
+    setEditValue("");
+  };
+
+  const handleDeleteNode = (nodeId: string) => {
+    setNodes(nodes.filter(node => node.id !== nodeId));
+  };
+
+  const getNodeColor = (type: string) => {
+    switch (type) {
+      case "start":
+        return "bg-primary/10 border-primary text-primary";
+      case "end":
+        return "bg-success/10 border-success text-success";
+      default:
+        return "bg-card border-border text-foreground";
+    }
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">Adapt Agent to New Client</h2>
+        <h2 className="text-3xl font-bold text-foreground mb-2">View & Edit Conversation Flow</h2>
         <p className="text-muted-foreground">
-          We'll scrape the client's website to customize the agent
+          Review and customize the agent's conversation flow structure
         </p>
       </div>
 
-      <Card className="p-6 bg-card border-border">
-        <div className="flex items-center gap-2 mb-4">
-          <Globe className="w-5 h-5 text-primary" />
-          <h3 className="font-semibold text-foreground">Client Website URL</h3>
+      <Card className="p-8 bg-card border-border min-h-[500px]">
+        <div className="relative w-full h-full">
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+            {connections.map((conn, i) => {
+              const fromNode = nodes.find(n => n.id === conn.from);
+              const toNode = nodes.find(n => n.id === conn.to);
+              if (!fromNode || !toNode) return null;
+
+              const x1 = fromNode.x + 80;
+              const y1 = fromNode.y + 30;
+              const x2 = toNode.x + 80;
+              const y2 = toNode.y + 15;
+
+              return (
+                <g key={i}>
+                  <defs>
+                    <marker
+                      id={`arrowhead-${i}`}
+                      markerWidth="10"
+                      markerHeight="10"
+                      refX="9"
+                      refY="3"
+                      orient="auto"
+                    >
+                      <polygon
+                        points="0 0, 10 3, 0 6"
+                        fill="hsl(var(--primary))"
+                        opacity="0.5"
+                      />
+                    </marker>
+                  </defs>
+                  <path
+                    d={`M ${x1} ${y1} Q ${x1} ${(y1 + y2) / 2} ${x2} ${y2}`}
+                    stroke="hsl(var(--primary))"
+                    strokeWidth="2"
+                    fill="none"
+                    opacity="0.5"
+                    markerEnd={`url(#arrowhead-${i})`}
+                  />
+                </g>
+              );
+            })}
+          </svg>
+
+          {nodes.map((node) => (
+            <div
+              key={node.id}
+              className="absolute"
+              style={{
+                left: `${node.x}px`,
+                top: `${node.y}px`,
+                zIndex: 10,
+              }}
+            >
+              <div
+                className={`relative px-4 py-2 rounded-lg border-2 shadow-sm transition-all hover:shadow-md ${getNodeColor(
+                  node.type
+                )}`}
+                style={{ minWidth: "160px" }}
+              >
+                {editingNode === node.id ? (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className="h-7 text-sm"
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSaveEdit(node.id);
+                        if (e.key === "Escape") setEditingNode(null);
+                      }}
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 w-7 p-0"
+                      onClick={() => handleSaveEdit(node.id)}
+                    >
+                      ✓
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-medium">{node.label}</span>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => handleEditNode(node.id, node.label)}
+                        className="p-1 hover:bg-primary/10 rounded transition-colors"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                      </button>
+                      {node.type !== "start" && (
+                        <button
+                          onClick={() => handleDeleteNode(node.id)}
+                          className="p-1 hover:bg-destructive/10 rounded transition-colors text-destructive"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+                {node.type === "start" && (
+                  <Badge className="absolute -top-2 -right-2 text-xs" variant="default">
+                    Start
+                  </Badge>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="flex gap-3">
-          <Input
-            placeholder="https://client-website.com"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            className="flex-1"
-          />
-          <Button variant="gradient" onClick={handleAdapt} disabled={!url || isAdapting}>
-            {isAdapting ? "Adapting..." : "Start Adaptation"}
-          </Button>
-        </div>
-        {isAdapting && (
-          <div className="mt-4">
-            <Progress value={progress} className="h-2" />
-            <p className="text-sm text-muted-foreground mt-2">
-              Analyzing website and adapting agent...
-            </p>
-          </div>
-        )}
       </Card>
 
-      {progress === 100 && (
-        <>
-          <Card className="p-6 bg-gradient-card border-border">
-            <div className="flex items-start gap-4 mb-4">
-              <CheckCircle2 className="w-6 h-6 text-success mt-1" />
-              <div className="flex-1">
-                <h3 className="font-semibold text-foreground mb-2">Adaptation Complete</h3>
-                <p className="text-sm text-muted-foreground">
-                  Successfully extracted and adapted agent based on client data
-                </p>
-              </div>
-            </div>
-            <div className="grid md:grid-cols-3 gap-4 mt-4">
-              <div className="bg-secondary/50 rounded-lg p-4">
-                <FileText className="w-5 h-5 text-primary mb-2" />
-                <p className="text-sm font-medium text-foreground">Pages Scraped</p>
-                <p className="text-2xl font-bold text-primary">12</p>
-              </div>
-              <div className="bg-secondary/50 rounded-lg p-4">
-                <AlertCircle className="w-5 h-5 text-accent mb-2" />
-                <p className="text-sm font-medium text-foreground">Intents Updated</p>
-                <p className="text-2xl font-bold text-accent">8</p>
-              </div>
-              <div className="bg-secondary/50 rounded-lg p-4">
-                <CheckCircle2 className="w-5 h-5 text-success mb-2" />
-                <p className="text-sm font-medium text-foreground">FAQs Extracted</p>
-                <p className="text-2xl font-bold text-success">24</p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-6 bg-card border-border">
-            <h3 className="font-semibold text-foreground mb-3">Extracted Company Context</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              AgroFinance Corp is a leading agricultural financing company specializing in providing
-              customized loan solutions for farmers and agribusinesses. With over 15 years of
-              experience, they offer flexible payment terms, competitive rates, and expert guidance
-              throughout the financing process. Their mission is to empower agricultural growth through
-              accessible and sustainable financial solutions.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary">Agricultural Finance</Badge>
-              <Badge variant="secondary">Loan Solutions</Badge>
-              <Badge variant="secondary">Expert Guidance</Badge>
-              <Badge variant="secondary">Flexible Terms</Badge>
-            </div>
-          </Card>
-
-          <div className="flex justify-end">
-            <Button variant="gradient" size="lg" onClick={onNext}>
-              Continue to Voice Prompts
-            </Button>
+      <div className="flex items-center gap-3">
+        <Button variant="outline" size="sm">
+          <Plus className="w-4 h-4 mr-2" />
+          Add Node
+        </Button>
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded border-2 border-primary bg-primary/10"></div>
+            <span>Start</span>
           </div>
-        </>
-      )}
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded border-2 border-border bg-card"></div>
+            <span>Action</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded border-2 border-success bg-success/10"></div>
+            <span>End</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
