@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "assistant";
@@ -246,7 +247,20 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
                       : "bg-muted text-foreground"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  <div className="text-sm prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-ol:my-1">
+                    <ReactMarkdown 
+                      components={{
+                        strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+                        em: ({ children }) => <em className="italic">{children}</em>,
+                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        ul: ({ children }) => <ul className="list-disc ml-4 mb-2">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal ml-4 mb-2">{children}</ol>,
+                        li: ({ children }) => <li className="mb-1">{children}</li>,
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
                   <p className="text-xs opacity-70 mt-2">
                     {message.timestamp.toLocaleTimeString()}
                   </p>
@@ -312,13 +326,17 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
         </Tabs>
       </Card>
 
-      {isDiscoveryComplete && (
-        <div className="flex justify-end">
-          <Button onClick={handleComplete} size="lg" className="gap-2">
-            Continuar a Selección de Template
-          </Button>
-        </div>
-      )}
+        {isDiscoveryComplete && (
+          <div className="w-full">
+            <Button 
+              onClick={handleComplete} 
+              size="lg" 
+              className="w-full gap-2 py-6 text-lg font-semibold"
+            >
+              Continuar a Selección de Template
+            </Button>
+          </div>
+        )}
     </div>
   );
 };

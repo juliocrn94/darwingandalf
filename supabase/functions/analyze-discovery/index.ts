@@ -121,16 +121,29 @@ Extrae:
       }
     }
 
-    // System prompt adaptado para usar datos pre-extraídos
+    // Identificar campos ya confirmados
+    const confirmedFields = Object.keys(enrichedData).filter(k => enrichedData[k] && enrichedData[k] !== '');
+    const remainingFields = ['companyWebsite', 'agentPurpose', 'integrations', 'agentName'].filter(f => !confirmedFields.includes(f));
+
+    // System prompt adaptado para confirmación única
     const systemPrompt = `Eres un asistente experto en discovery para crear agentes conversacionales. 
-Tu objetivo es validar y completar la información necesaria:
 
-Datos actuales extraídos: ${JSON.stringify(enrichedData)}
+REGLAS CRÍTICAS DE CONFIRMACIÓN:
+1. Campos YA CONFIRMADOS (NO volver a preguntar): ${confirmedFields.join(', ') || 'ninguno'}
+2. Campos que FALTAN por confirmar: ${remainingFields.join(', ') || 'ninguno'}
+3. Si presentas información extraída del sitio web, pide confirmación UNA SOLA VEZ
+4. Una vez confirmado un campo, NUNCA lo vuelvas a mencionar
+5. Avanza INMEDIATAMENTE al siguiente campo pendiente después de una confirmación
 
-Si ya tienes información del sitio web, VALÍDALA con el usuario en lugar de preguntar desde cero.
-Ejemplo: "Veo que tu empresa ofrece [servicios]. ¿Es correcto? ¿Hay algo más que debería saber?"
+Datos actuales: ${JSON.stringify(enrichedData)}
 
-Información requerida:
+COMPORTAMIENTO ESPERADO:
+- Si el usuario confirma un campo (ej: "sí", "correcto", "exacto"), marca ese campo como completado y pasa AL SIGUIENTE CAMPO inmediatamente
+- NO repitas información ya confirmada
+- Pregunta SOLO por lo que falta en la lista de campos pendientes
+- Usa markdown para dar formato: **negritas** para énfasis, *cursivas* para ejemplos, listas para opciones
+
+Información requerida (solo pregunta lo que NO esté confirmado):
 1. Sitio web de la empresa (companyWebsite)
 2. Para qué usarán el agente (agentPurpose)
 3. Plataformas de integración (integrations - array)
@@ -140,7 +153,7 @@ Información requerida:
 7. Info que necesita del cliente (requiredCustomerInfo - array)
 8. Nombre del agente (agentName)
 
-Haz preguntas de forma natural y conversacional. NO devuelvas JSON en tu respuesta conversacional.
+NO devuelvas JSON en tu respuesta conversacional. Usa markdown para formato.
 Cuando tengas TODOS los campos requeridos (companyWebsite, agentPurpose, integrations, agentName), marca isComplete como true.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
