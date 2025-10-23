@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Stepper } from "@/components/Stepper";
-import { StepOne } from "@/components/steps/StepOne";
-import { StepTwo } from "@/components/steps/StepTwo";
-import { StepThree } from "@/components/steps/StepThree";
+import { FindHandoffsStep } from "@/components/steps/FindHandoffsStep";
+import { SelectAgentStep } from "@/components/steps/SelectAgentStep";
+import { ViewFlowStep } from "@/components/steps/ViewFlowStep";
 import { StepFour } from "@/components/steps/StepFour";
-import { StepFive } from "@/components/steps/StepFive";
-import { StepSix } from "@/components/steps/StepSix";
+import { VoicePromptStep } from "@/components/steps/VoicePromptStep";
+import { FinalReviewStep } from "@/components/steps/FinalReviewStep";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
@@ -63,16 +63,17 @@ const Index = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return <StepOne onDataChange={setHandoffData} />;
+        return <FindHandoffsStep onDataChange={setHandoffData} />;
       case 1:
         return (
-          <StepTwo
+          <SelectAgentStep
             onAgentSelect={setSelectedAgentId}
             selectedAgentId={selectedAgentId}
+            handoffId={handoffData?.metadata?.handoffId}
           />
         );
       case 2:
-        return <StepThree />;
+        return <ViewFlowStep />;
       case 3:
         return (
           <StepFour
@@ -82,16 +83,22 @@ const Index = () => {
         );
       case 4:
         return (
-          <StepFive
+          <VoicePromptStep
             selectedModel={selectedAIModel}
             onModelChange={setSelectedAIModel}
             onVariantSelect={setSelectedPromptVariant}
           />
         );
       case 5:
-        return <StepSix />;
+        return (
+          <FinalReviewStep
+            baseAgentId={selectedAgentId || undefined}
+            selectedPromptVariant={selectedPromptVariant || undefined}
+            clientUrl={clientUrl || undefined}
+          />
+        );
       default:
-        return <StepOne onDataChange={setHandoffData} />;
+        return <FindHandoffsStep onDataChange={setHandoffData} />;
     }
   };
 

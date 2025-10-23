@@ -1,1 +1,16 @@
 project_id = "nadafculrumyvrxsflnf"
+
+[functions.process-handoff]
+verify_jwt = false
+
+[functions.search-agents]
+verify_jwt = false
+
+[functions.adapt-agent]
+verify_jwt = false
+
+[functions.optimize-prompt]
+verify_jwt = false
+
+[functions.generate-agent]
+verify_jwt = false
