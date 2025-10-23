@@ -1,7 +1,8 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Users, Clock, Copy } from "lucide-react";
+import { TrendingUp, Users, Clock, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 const mockMatches = [
   {
@@ -33,70 +34,91 @@ const mockMatches = [
   },
 ];
 
-export const StepTwo = ({ onNext }: { onNext: () => void }) => {
+interface StepTwoProps {
+  onAgentSelect: (agentId: string) => void;
+  selectedAgentId: string | null;
+}
+
+export const StepTwo = ({ onAgentSelect, selectedAgentId }: StepTwoProps) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">Similar Handoffs Found</h2>
+        <h2 className="text-3xl font-bold text-foreground mb-2">
+          Agentes con Mayor Similitud
+        </h2>
         <p className="text-muted-foreground">
-          Select an agent to use as a base for cloning
+          Selecciona un agente para usar como base para la clonación
         </p>
       </div>
 
       <div className="grid gap-4">
-        {mockMatches.map((match, index) => (
-          <Card
-            key={match.agent_id}
-            className="p-6 bg-card border-border hover:shadow-card hover:border-primary/50 transition-smooth cursor-pointer"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-lg font-semibold text-foreground">{match.client_name}</h3>
-                  <Badge variant="outline" className="bg-primary/20 text-primary border-primary/50">
-                    {(match.similarity_score * 100).toFixed(0)}% Match
-                  </Badge>
+        {mockMatches.map((match) => {
+          const isSelected = selectedAgentId === match.agent_id;
+
+          return (
+            <Card
+              key={match.agent_id}
+              onClick={() => onAgentSelect(match.agent_id)}
+              className={cn(
+                "p-6 relative cursor-pointer transition-all duration-300",
+                isSelected
+                  ? "border-2 border-primary bg-primary/5 shadow-glow"
+                  : "border-2 border-border bg-card hover:border-primary/30 hover:shadow-card"
+              )}
+            >
+              {/* Selection Checkmark */}
+              {isSelected && (
+                <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                  <Check className="w-5 h-5 text-primary-foreground" />
                 </div>
-                <p className="text-sm text-muted-foreground mb-3">{match.reason}</p>
-                <div className="flex flex-wrap gap-2">
-                  {match.shared_tags.map((tag) => (
-                    <Badge key={tag} variant="secondary">
-                      {tag}
+              )}
+
+              <div className="flex items-start justify-between mb-4 pr-12">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-lg font-semibold text-foreground">
+                      {match.client_name}
+                    </h3>
+                    <Badge
+                      variant="outline"
+                      className="bg-primary/20 text-primary border-primary/50"
+                    >
+                      {(match.similarity_score * 100).toFixed(0)}% Match
                     </Badge>
-                  ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">{match.reason}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {match.shared_tags.map((tag) => (
+                      <Badge key={tag} variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <span className="text-3xl font-bold text-primary">
+                    {(match.similarity_score * 100).toFixed(0)}%
+                  </span>
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-2">
-                <span className="text-3xl font-bold text-primary">
-                  {(match.similarity_score * 100).toFixed(0)}%
-                </span>
-              </div>
-            </div>
 
-            <div className="flex items-center gap-6 text-sm text-muted-foreground mb-4">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4" />
-                <span>CSAT: 4.5/5</span>
+              <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4" />
+                  <span>CSAT: 4.5/5</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  <span>1.2K+ convos</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>35% conversion</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                <span>1.2K+ convos</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                <span>35% conversion</span>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <Button variant="gradient" className="flex-1" onClick={onNext}>
-                <Copy className="w-4 h-4 mr-2" />
-                Clone This Agent
-              </Button>
-              <Button variant="outline">View Details</Button>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

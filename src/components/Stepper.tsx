@@ -23,10 +23,10 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
                 className={cn(
                   "w-12 h-12 rounded-full flex items-center justify-center border-2 transition-smooth",
                   currentStep > index
-                    ? "bg-primary border-primary text-primary-foreground shadow-glow"
+                    ? "bg-primary border-primary text-primary-foreground"
                     : currentStep === index
-                    ? "bg-primary/20 border-primary text-primary shadow-glow"
-                    : "bg-secondary border-border text-muted-foreground"
+                    ? "bg-primary/10 border-primary text-primary"
+                    : "bg-background border-border text-muted-foreground"
                 )}
               >
                 {currentStep > index ? (
