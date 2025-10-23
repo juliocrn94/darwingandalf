@@ -1,32 +1,41 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Stepper } from "@/components/Stepper";
-import { FindHandoffsStep } from "@/components/steps/FindHandoffsStep";
+import { DiscoveryConversationStep } from "@/components/steps/DiscoveryConversationStep";
 import { SelectAgentStep } from "@/components/steps/SelectAgentStep";
-import { ViewFlowStep } from "@/components/steps/ViewFlowStep";
-import { StepFour } from "@/components/steps/StepFour";
-import { VoicePromptStep } from "@/components/steps/VoicePromptStep";
-import { FinalReviewStep } from "@/components/steps/FinalReviewStep";
+import { FlowTestStep } from "@/components/steps/FlowTestStep";
+import { DarwinCreationStep } from "@/components/steps/DarwinCreationStep";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import type { HandoffData } from "@/types/agent";
 
 const steps = [
-  { id: 1, title: "Find Handoffs", description: "Search similar agents" },
-  { id: 2, title: "Select Agent", description: "Choose base to clone" },
-  { id: 3, title: "View Flow", description: "Review & edit flow" },
-  { id: 4, title: "Adapt Agent", description: "Customize for client" },
-  { id: 5, title: "Voice Prompt", description: "Optimize with audio" },
-  { id: 6, title: "Final Review", description: "Test & deploy" },
+  { id: 1, title: "Discovery", description: "Conversación con AI" },
+  { id: 2, title: "Template", description: "Seleccionar base" },
+  { id: 3, title: "Flujo & Prueba", description: "Diagrama + Test" },
+  { id: 4, title: "Darwin", description: "Crear agente" },
 ];
 
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [handoffData, setHandoffData] = useState<HandoffData | null>(null);
+  const [discoverySessionId, setDiscoverySessionId] = useState<string>("");
+  const [discoveryData, setDiscoveryData] = useState<any>(null);
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
-  const [clientUrl, setClientUrl] = useState<string | null>(null);
-  const [selectedAIModel, setSelectedAIModel] = useState<string>("gpt-4");
-  const [selectedPromptVariant, setSelectedPromptVariant] = useState<number | null>(null);
+  const [agentName, setAgentName] = useState<string>("");
+
+  const handleDiscoveryComplete = (data: any, sessionId: string) => {
+    setDiscoveryData(data);
+    setDiscoverySessionId(sessionId);
+    setAgentName(data.agentName || "");
+    setCurrentStep(1);
+  };
+
+  const handleAgentSelect = (agentId: string) => {
+    setSelectedAgentId(agentId);
+  };
+
+  const handleFlowComplete = () => {
+    setCurrentStep(3);
+  };
 
   const handleNext = () => {
     if (currentStep < steps.length - 1 && isStepValid()) {
@@ -37,15 +46,13 @@ const Index = () => {
   const isStepValid = () => {
     switch (currentStep) {
       case 0:
-        return handoffData !== null;
+        return discoveryData !== null && discoverySessionId !== "";
       case 1:
         return selectedAgentId !== null;
       case 2:
-        return true; // Flow editor - always valid
+        return true;
       case 3:
-        return clientUrl !== null && clientUrl.length > 0;
-      case 4:
-        return selectedPromptVariant !== null;
+        return true;
       default:
         return true;
     }
@@ -54,42 +61,32 @@ const Index = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return <FindHandoffsStep onDataChange={setHandoffData} />;
+        return <DiscoveryConversationStep onDiscoveryComplete={handleDiscoveryComplete} />;
       case 1:
         return (
           <SelectAgentStep
-            onAgentSelect={setSelectedAgentId}
+            discoverySessionId={discoverySessionId}
+            onAgentSelect={handleAgentSelect}
             selectedAgentId={selectedAgentId}
-            handoffId={handoffData?.metadata?.handoffId}
           />
         );
       case 2:
-        return <ViewFlowStep />;
+        return (
+          <FlowTestStep
+            agentId={selectedAgentId!}
+            onComplete={handleFlowComplete}
+          />
+        );
       case 3:
         return (
-          <StepFour
-            clientUrl={clientUrl}
-            onUrlChange={setClientUrl}
-          />
-        );
-      case 4:
-        return (
-          <VoicePromptStep
-            selectedModel={selectedAIModel}
-            onModelChange={setSelectedAIModel}
-            onVariantSelect={setSelectedPromptVariant}
-          />
-        );
-      case 5:
-        return (
-          <FinalReviewStep
-            baseAgentId={selectedAgentId || undefined}
-            selectedPromptVariant={selectedPromptVariant || undefined}
-            clientUrl={clientUrl || undefined}
+          <DarwinCreationStep
+            agentId={selectedAgentId!}
+            agentName={agentName}
+            discoveryData={discoveryData}
           />
         );
       default:
-        return <FindHandoffsStep onDataChange={setHandoffData} />;
+        return <DiscoveryConversationStep onDiscoveryComplete={handleDiscoveryComplete} />;
     }
   };
 
@@ -101,7 +98,7 @@ const Index = () => {
           <Stepper steps={steps} currentStep={currentStep} />
           <div className="mt-8">{renderStep()}</div>
 
-          {currentStep < steps.length - 1 && (
+          {currentStep < steps.length - 1 && currentStep !== 0 && currentStep !== 2 && (
             <div className="flex justify-end mt-8">
               <Button
                 onClick={handleNext}

@@ -1,71 +1,62 @@
 import { useEffect, useState } from "react";
-import { AgentCard } from "@/components/AgentCard";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import type { Agent } from "@/types/agent";
+import { Badge } from "@/components/ui/badge";
+import { TrendingUp, Users, Clock } from "lucide-react";
 
-interface SelectAgentStepProps {
-  onAgentSelect: (agentId: string | null) => void;
-  selectedAgentId: string | null;
-  handoffId?: string;
+interface AgentTemplate extends Agent {
+  metrics?: {
+    averageConversion?: number;
+    averageSatisfaction?: number;
+    averageResponseTime?: number;
+    totalConversations?: number;
+  };
+  matchScore?: number;
 }
 
-export const SelectAgentStep = ({ 
-  onAgentSelect, 
+interface SelectAgentStepProps {
+  discoverySessionId: string;
+  onAgentSelect: (agentId: string) => void;
+  selectedAgentId: string | null;
+}
+
+export const SelectAgentStep = ({
+  discoverySessionId,
+  onAgentSelect,
   selectedAgentId,
-  handoffId 
 }: SelectAgentStepProps) => {
-  const [agents, setAgents] = useState<Agent[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const [templates, setTemplates] = useState<AgentTemplate[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadAgents();
-  }, [handoffId]);
+    fetchRecommendedTemplates();
+  }, [discoverySessionId]);
 
-  const loadAgents = async () => {
+  const fetchRecommendedTemplates = async () => {
     setIsLoading(true);
     try {
-      if (handoffId) {
-        // Search similar agents using AI
-        const { data, error } = await supabase.functions.invoke("search-agents", {
-          body: { handoffId }
+      const { data, error } = await supabase.functions.invoke("recommend-templates", {
+        body: { sessionId: discoverySessionId },
+      });
+
+      if (error) throw error;
+
+      setTemplates(data.templates || []);
+      
+      if (data.templates?.length > 0) {
+        toast({
+          title: "Templates recomendados",
+          description: `Encontramos ${data.templates.length} templates que se ajustan a tu caso de uso`,
         });
-
-        if (error) throw error;
-        
-        if (data?.agents) {
-          setAgents(data.agents);
-        }
-      } else {
-        // Load all agents
-        const { data, error } = await supabase
-          .from("agents")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
-        
-        if (data) {
-          setAgents(data.map(agent => ({
-            ...agent,
-            intents: Array.isArray(agent.intents) 
-              ? agent.intents.map((intent: any) => ({
-                  name: intent?.name || "",
-                  description: intent?.description || ""
-                }))
-              : []
-          })));
-        }
       }
     } catch (error) {
-      console.error("Error loading agents:", error);
+      console.error("Error fetching templates:", error);
       toast({
         title: "Error",
-        description: "No se pudieron cargar los agentes",
+        description: "No se pudieron cargar los templates recomendados",
         variant: "destructive",
       });
     } finally {
@@ -73,50 +64,109 @@ export const SelectAgentStep = ({
     }
   };
 
-  const filteredAgents = agents.filter(agent =>
-    agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    agent.industry.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    agent.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">
-          Select Base Agent
-        </h2>
+        <h2 className="text-3xl font-bold text-foreground mb-2">Seleccionar Template Base</h2>
         <p className="text-muted-foreground">
-          Elige un agente base para clonar y adaptar a tu cliente
+          Basándonos en tu discovery, estos son los templates recomendados
         </p>
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-        <Input
-          placeholder="Buscar agentes por nombre, industria o descripción..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
-        />
-      </div>
-
       {isLoading ? (
-        <div className="text-center py-12 text-muted-foreground">
-          Cargando agentes...
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i} className="p-6 bg-card border-border animate-pulse">
+              <div className="h-48 bg-muted rounded" />
+            </Card>
+          ))}
         </div>
-      ) : filteredAgents.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          No se encontraron agentes
-        </div>
+      ) : templates.length === 0 ? (
+        <Card className="p-8 text-center bg-card border-border">
+          <p className="text-muted-foreground">
+            No se encontraron templates recomendados. Intenta con otro discovery.
+          </p>
+        </Card>
       ) : (
-        <div className="grid gap-4">
-          {filteredAgents.map((agent) => (
-            <AgentCard
-              key={agent.id}
-              agent={agent}
-              isSelected={selectedAgentId === agent.id}
-              onSelect={() => onAgentSelect(agent.id)}
-            />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {templates.map((template) => (
+            <Card
+              key={template.id}
+              className={`p-6 cursor-pointer transition-all border-2 ${
+                selectedAgentId === template.id
+                  ? "border-primary shadow-glow bg-primary/5"
+                  : "border-border hover:border-primary/50 bg-card"
+              }`}
+              onClick={() => onAgentSelect(template.id)}
+            >
+              <div className="space-y-4">
+                {/* Header with Match Score */}
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-foreground">{template.name}</h3>
+                    <p className="text-sm text-muted-foreground">{template.industry}</p>
+                  </div>
+                  {template.matchScore && (
+                    <Badge variant="default" className="text-sm">
+                      {Math.round(template.matchScore)}% match
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Description */}
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  {template.description}
+                </p>
+
+                {/* Anonymous Metrics */}
+                {template.metrics && (
+                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border">
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-1">
+                        <TrendingUp className="w-3 h-3" />
+                        Conversión
+                      </div>
+                      <p className="font-bold text-foreground">
+                        {template.metrics.averageConversion}%
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-1">
+                        <Users className="w-3 h-3" />
+                        Satisfacción
+                      </div>
+                      <p className="font-bold text-foreground">
+                        {template.metrics.averageSatisfaction}/5
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-1">
+                        <Clock className="w-3 h-3" />
+                        Tiempo
+                      </div>
+                      <p className="font-bold text-foreground">
+                        {template.metrics.averageResponseTime}s
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Intents Preview */}
+                <div className="flex flex-wrap gap-1">
+                  {Array.isArray(template.intents) &&
+                    template.intents.slice(0, 3).map((intent: any, idx: number) => (
+                      <Badge key={idx} variant="secondary" className="text-xs">
+                        {intent.name || intent.description}
+                      </Badge>
+                    ))}
+                  {Array.isArray(template.intents) && template.intents.length > 3 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{template.intents.length - 3} más
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </Card>
           ))}
         </div>
       )}

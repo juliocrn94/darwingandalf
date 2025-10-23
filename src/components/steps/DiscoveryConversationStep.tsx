@@ -1,0 +1,296 @@
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AudioRecorder } from "@/components/AudioRecorder";
+import { AudioUploader } from "@/components/AudioUploader";
+import { Send, Mic, Upload, MessageSquare, CheckCircle2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+}
+
+interface DiscoveryData {
+  companyWebsite?: string;
+  agentPurpose?: string;
+  integrations?: string[];
+  idealConversations?: string[];
+  faq?: string[];
+  excludedServices?: string[];
+  requiredCustomerInfo?: string[];
+  agentName?: string;
+}
+
+interface DiscoveryConversationStepProps {
+  onDiscoveryComplete: (data: DiscoveryData, sessionId: string) => void;
+}
+
+export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConversationStepProps) => {
+  const { toast } = useToast();
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: "assistant",
+      content: "¡Hola! Soy tu asistente para crear un agente conversacional perfecto para tu empresa. Vamos a conversar para entender exactamente qué necesitas. Para empezar, ¿cuál es el sitio web de tu empresa?",
+      timestamp: new Date(),
+    },
+  ]);
+  const [inputText, setInputText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [discoveryData, setDiscoveryData] = useState<DiscoveryData>({});
+  const [sessionId, setSessionId] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<"text" | "audio" | "upload">("text");
+
+  const requiredFields = [
+    { key: "companyWebsite", label: "Sitio web" },
+    { key: "agentPurpose", label: "Propósito del agente" },
+    { key: "integrations", label: "Integraciones" },
+    { key: "agentName", label: "Nombre del agente" },
+  ];
+
+  const completedFields = requiredFields.filter(
+    (field) => discoveryData[field.key as keyof DiscoveryData]
+  ).length;
+
+  const isDiscoveryComplete = completedFields === requiredFields.length;
+
+  const handleSendMessage = async (content: string) => {
+    if (!content.trim() && activeTab === "text") return;
+
+    setIsLoading(true);
+    const userMessage: Message = {
+      role: "user",
+      content: content,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    setInputText("");
+
+    try {
+      const { data, error } = await supabase.functions.invoke("analyze-discovery", {
+        body: {
+          messages: [...messages, userMessage],
+          currentData: discoveryData,
+        },
+      });
+
+      if (error) throw error;
+
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: data.response,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      if (data.extractedData) {
+        setDiscoveryData((prev) => ({ ...prev, ...data.extractedData }));
+      }
+
+      if (data.sessionId) {
+        setSessionId(data.sessionId);
+      }
+
+      if (data.isComplete) {
+        toast({
+          title: "Discovery completado",
+          description: "Tenemos toda la información necesaria para continuar",
+        });
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo procesar el mensaje",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAudioRecording = async (blob: Blob) => {
+    setIsLoading(true);
+    try {
+      // Transcribir el audio usando Lovable AI
+      const formData = new FormData();
+      formData.append("audio", blob, "recording.webm");
+
+      const { data, error } = await supabase.functions.invoke("transcribe-audio", {
+        body: formData,
+      });
+
+      if (error) throw error;
+
+      await handleSendMessage(data.transcription);
+    } catch (error) {
+      console.error("Error processing audio:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo procesar el audio",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAudioFile = async (file: File) => {
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("audio", file);
+
+      const { data, error } = await supabase.functions.invoke("transcribe-audio", {
+        body: formData,
+      });
+
+      if (error) throw error;
+
+      await handleSendMessage(data.transcription);
+    } catch (error) {
+      console.error("Error processing audio file:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo procesar el archivo de audio",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleComplete = () => {
+    if (isDiscoveryComplete) {
+      onDiscoveryComplete(discoveryData, sessionId);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold text-foreground mb-2">Conversación de Discovery</h2>
+        <p className="text-muted-foreground">
+          Conversemos para entender tu negocio y diseñar el agente perfecto
+        </p>
+      </div>
+
+      {/* Progress Tracker */}
+      <Card className="p-4 bg-gradient-card border-border">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-foreground">Progreso del Discovery</h3>
+          <Badge variant={isDiscoveryComplete ? "default" : "secondary"}>
+            {completedFields}/{requiredFields.length}
+          </Badge>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {requiredFields.map((field) => (
+            <div key={field.key} className="flex items-center gap-2 text-sm">
+              {discoveryData[field.key as keyof DiscoveryData] ? (
+                <CheckCircle2 className="w-4 h-4 text-success" />
+              ) : (
+                <div className="w-4 h-4 rounded-full border-2 border-muted" />
+              )}
+              <span className="text-muted-foreground">{field.label}</span>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Chat Interface */}
+      <Card className="p-6 bg-card border-border">
+        <ScrollArea className="h-[400px] pr-4 mb-4">
+          <div className="space-y-4">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-[80%] p-4 rounded-lg ${
+                    message.role === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-foreground"
+                  }`}
+                >
+                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  <p className="text-xs opacity-70 mt-2">
+                    {message.timestamp.toLocaleTimeString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-muted p-4 rounded-lg">
+                  <div className="flex gap-2">
+                    <div className="w-2 h-2 bg-foreground rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-foreground rounded-full animate-bounce delay-100" />
+                    <div className="w-2 h-2 bg-foreground rounded-full animate-bounce delay-200" />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </ScrollArea>
+
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+          <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsTrigger value="text">
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Texto
+            </TabsTrigger>
+            <TabsTrigger value="audio">
+              <Mic className="w-4 h-4 mr-2" />
+              Grabar
+            </TabsTrigger>
+            <TabsTrigger value="upload">
+              <Upload className="w-4 h-4 mr-2" />
+              Subir
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="text" className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Escribe tu mensaje aquí..."
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && !isLoading && handleSendMessage(inputText)}
+                disabled={isLoading}
+              />
+              <Button
+                onClick={() => handleSendMessage(inputText)}
+                disabled={isLoading || !inputText.trim()}
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="audio">
+            <AudioRecorder onRecordingComplete={handleAudioRecording} />
+          </TabsContent>
+
+          <TabsContent value="upload">
+            <AudioUploader onFileSelect={handleAudioFile} />
+          </TabsContent>
+        </Tabs>
+      </Card>
+
+      {isDiscoveryComplete && (
+        <div className="flex justify-end">
+          <Button onClick={handleComplete} size="lg" className="gap-2">
+            Continuar a Selección de Template
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+};
