@@ -154,12 +154,12 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
 
   const handleAudioRecording = async (blob: Blob) => {
     setIsLoading(true);
+    setActiveTab("text"); // Cambiar a tab de texto antes de procesar
     try {
       const formData = new FormData();
       formData.append("audio", blob, `recording-${Date.now()}.webm`);
 
       const transcription = await requestTranscription(formData);
-      setActiveTab("text");
       await handleSendMessage(transcription);
     } catch (error) {
       console.error("Error processing audio:", error);
@@ -168,19 +168,18 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
         description: "No se pudo procesar el audio",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };
 
   const handleAudioFile = async (file: File) => {
     setIsLoading(true);
+    setActiveTab("text"); // Cambiar a tab de texto antes de procesar
     try {
       const formData = new FormData();
       formData.append("audio", file);
 
       const transcription = await requestTranscription(formData);
-      setActiveTab("text");
       await handleSendMessage(transcription);
     } catch (error) {
       console.error("Error processing audio file:", error);
@@ -189,7 +188,6 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
         description: "No se pudo procesar el archivo de audio",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };

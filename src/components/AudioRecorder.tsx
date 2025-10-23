@@ -1,8 +1,7 @@
-import { Mic, Square, Pause, Play, RotateCcw } from "lucide-react";
+import { Mic, Square, Pause, Play, RotateCcw, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
 
 interface AudioRecorderProps {
   onRecordingComplete: (blob: Blob) => void;
@@ -23,11 +22,12 @@ export const AudioRecorder = ({ onRecordingComplete }: AudioRecorderProps) => {
     formatTime,
   } = useAudioRecorder();
 
-  useEffect(() => {
+  const handleSendRecording = () => {
     if (audioBlob) {
       onRecordingComplete(audioBlob);
+      resetRecording();
     }
-  }, [audioBlob, onRecordingComplete]);
+  };
 
   return (
     <div className="flex flex-col items-center space-y-6 py-8">
@@ -90,10 +90,15 @@ export const AudioRecorder = ({ onRecordingComplete }: AudioRecorderProps) => {
       {audioUrl && (
         <div className="w-full space-y-4">
           <audio src={audioUrl} controls className="w-full" />
-          <Button variant="outline" onClick={resetRecording} className="w-full">
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Grabar de nuevo
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleSendRecording} className="flex-1">
+              <Send className="w-4 h-4 mr-2" />
+              Enviar grabación
+            </Button>
+            <Button variant="outline" onClick={resetRecording}>
+              <RotateCcw className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       )}
     </div>
