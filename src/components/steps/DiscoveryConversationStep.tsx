@@ -66,6 +66,36 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
 
   const isDiscoveryComplete = completedFields === requiredFields.length;
 
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+  const requestTranscription = async (formData: FormData) => {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error("Supabase environment variables no configuradas");
+    }
+
+    const response = await fetch(`${supabaseUrl}/functions/v1/transcribe-audio`, {
+      method: "POST",
+      headers: {
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${supabaseAnonKey}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorPayload = await response.text();
+      throw new Error(errorPayload || "Error desconocido en la transcripción");
+    }
+
+    const payload = await response.json();
+    if (!payload?.transcription) {
+      throw new Error("La función no devolvió una transcripción");
+    }
+
+    return payload.transcription as string;
+  };
+
   const handleSendMessage = async (content: string) => {
     if (!content.trim() && activeTab === "text") return;
 
@@ -124,17 +154,12 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
   const handleAudioRecording = async (blob: Blob) => {
     setIsLoading(true);
     try {
-      // Transcribir el audio usando Lovable AI
       const formData = new FormData();
-      formData.append("audio", blob, "recording.webm");
+      formData.append("audio", blob, `recording-${Date.now()}.webm`);
 
-      const { data, error } = await supabase.functions.invoke("transcribe-audio", {
-        body: formData,
-      });
-
-      if (error) throw error;
-
-      await handleSendMessage(data.transcription);
+      const transcription = await requestTranscription(formData);
+      setActiveTab("text");
+      await handleSendMessage(transcription);
     } catch (error) {
       console.error("Error processing audio:", error);
       toast({
@@ -153,13 +178,9 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
       const formData = new FormData();
       formData.append("audio", file);
 
-      const { data, error } = await supabase.functions.invoke("transcribe-audio", {
-        body: formData,
-      });
-
-      if (error) throw error;
-
-      await handleSendMessage(data.transcription);
+      const transcription = await requestTranscription(formData);
+      setActiveTab("text");
+      await handleSendMessage(transcription);
     } catch (error) {
       console.error("Error processing audio file:", error);
       toast({
