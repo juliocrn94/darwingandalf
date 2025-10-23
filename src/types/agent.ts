@@ -24,6 +24,7 @@ export interface HandoffData {
     duration?: number;
     fileName?: string;
     fileSize?: number;
+    handoffId?: string;
   };
 }
 

@@ -9,16 +9,7 @@ import { VoicePromptStep } from "@/components/steps/VoicePromptStep";
 import { FinalReviewStep } from "@/components/steps/FinalReviewStep";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-
-interface HandoffData {
-  type: "audio_recording" | "audio_file" | "text" | "json";
-  content: Blob | string;
-  metadata?: {
-    duration?: number;
-    fileName?: string;
-    fileSize?: number;
-  };
-}
+import type { HandoffData } from "@/types/agent";
 
 const steps = [
   { id: 1, title: "Find Handoffs", description: "Search similar agents" },
