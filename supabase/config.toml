@@ -1,16 +1,16 @@
 project_id = "nadafculrumyvrxsflnf"
 
-[functions.process-handoff]
+[functions.analyze-discovery]
 verify_jwt = false
 
-[functions.search-agents]
+[functions.recommend-templates]
 verify_jwt = false
 
-[functions.adapt-agent]
+[functions.test-agent]
 verify_jwt = false
 
-[functions.optimize-prompt]
+[functions.create-in-darwin]
 verify_jwt = false
 
-[functions.generate-agent]
+[functions.transcribe-audio]
 verify_jwt = false
