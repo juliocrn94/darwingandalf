@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Sidebar } from "@/components/Sidebar";
 import { Stepper } from "@/components/Stepper";
 import { StepOne } from "@/components/steps/StepOne";
 import { StepTwo } from "@/components/steps/StepTwo";
@@ -43,10 +42,8 @@ const Index = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar currentStep={currentStep} />
-      
-      <main className="flex-1 overflow-auto">
+    <div className="min-h-screen bg-background">
+      <main className="w-full">
         {currentStep === 0 && (
           <div className="relative h-64 overflow-hidden">
             <img
