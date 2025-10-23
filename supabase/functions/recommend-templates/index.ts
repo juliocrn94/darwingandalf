@@ -31,6 +31,27 @@ serve(async (req) => {
 
     const discoveryData = session.metadata?.currentData || {};
 
+    // Obtener deals de HubSpot
+    let hubspotDeals: any[] = [];
+    try {
+      const hubspotResponse = await fetch(`${supabaseUrl}/functions/v1/fetch-hubspot-deals`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (hubspotResponse.ok) {
+        const hubspotData = await hubspotResponse.json();
+        hubspotDeals = hubspotData.deals || [];
+        console.log(`Obtenidos ${hubspotDeals.length} deals de HubSpot`);
+      }
+    } catch (hubspotError) {
+      console.error("Error obteniendo deals de HubSpot:", hubspotError);
+      // Continuar sin datos de HubSpot
+    }
+
     // Obtener todos los agentes
     const { data: agents, error: agentsError } = await supabase
       .from("agents")
@@ -55,15 +76,37 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `Analiza qué tan bien cada agente se ajusta al caso de uso del discovery.
+            content: `Analiza qué tan bien cada agente se ajusta al caso de uso del discovery y los deals de HubSpot.
+
 Discovery data: ${JSON.stringify(discoveryData)}
-Agents: ${JSON.stringify(agents?.map(a => ({ id: a.id, name: a.name, industry: a.industry, description: a.description })))}
+
+HubSpot deals data (industrias, stages, companies): ${JSON.stringify(
+  hubspotDeals.map(d => ({
+    dealName: d.dealName,
+    dealStage: d.dealStage,
+    industry: d.company?.industry,
+    companyName: d.company?.name,
+    description: d.company?.description
+  }))
+)}
+
+Agents disponibles: ${JSON.stringify(agents?.map(a => ({ 
+  id: a.id, 
+  name: a.name, 
+  industry: a.industry, 
+  description: a.description 
+})))}
+
+Considera:
+1. Match con el propósito del discovery
+2. Similitud con industrias de los deals de HubSpot
+3. Casos de uso similares en deals activos
 
 Devuelve un ranking de agentes con scores del 0-100.`
           },
           {
             role: "user",
-            content: "Calcula el match score para cada agente"
+            content: "Calcula el match score para cada agente basándote en el discovery y los deals de HubSpot"
           }
         ],
         tools: [{

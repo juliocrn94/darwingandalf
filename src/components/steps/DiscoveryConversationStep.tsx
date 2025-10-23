@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,7 @@ interface DiscoveryConversationStepProps {
 
 export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConversationStepProps) => {
   const { toast } = useToast();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -46,6 +47,11 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
   const [discoveryData, setDiscoveryData] = useState<DiscoveryData>({});
   const [sessionId, setSessionId] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"text" | "audio" | "upload">("text");
+
+  // Auto-scroll cuando llegan nuevos mensajes
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const requiredFields = [
     { key: "companyWebsite", label: "Sitio web" },
@@ -237,6 +243,7 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
 
