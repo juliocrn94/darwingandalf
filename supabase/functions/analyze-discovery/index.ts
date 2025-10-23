@@ -84,7 +84,11 @@ Extrae:
                     properties: {
                       companyDescription: { type: "string" },
                       services: { type: "array", items: { type: "string" } },
-                      platforms: { type: "array", items: { type: "string" } },
+                      crmIntegrations: { 
+                        type: "array", 
+                        items: { type: "string" },
+                        description: "CRM and business systems mentioned (HubSpot, Salesforce, Zoho, etc.). NOT communication channels."
+                      },
                       contactInfo: { type: "string" },
                       faq: { type: "array", items: { type: "string" } }
                     }
@@ -107,7 +111,7 @@ Extrae:
                 ...enrichedData,
                 companyWebsite: urls[0],
                 agentPurpose: parsed.companyDescription || enrichedData.agentPurpose,
-                integrations: parsed.platforms || enrichedData.integrations,
+                integrations: parsed.crmIntegrations || enrichedData.integrations,
                 faq: parsed.faq || enrichedData.faq,
               };
 
@@ -143,10 +147,18 @@ COMPORTAMIENTO ESPERADO:
 - Pregunta SOLO por lo que falta en la lista de campos pendientes
 - Usa markdown para dar formato: **negritas** para énfasis, *cursivas* para ejemplos, listas para opciones
 
+DIFERENCIA CRÍTICA - INTEGRACIONES vs CANALES:
+- ✅ **INTEGRACIONES** (sí preguntar): Son sistemas empresariales y CRMs como HubSpot, Salesforce, Zoho CRM, Pipedrive, Monday.com, Zendesk, Freshdesk, etc.
+- ❌ **CANALES** (NO preguntar): WhatsApp, Messenger, Telegram, SMS, Instagram, etc. Estos NO son integraciones, son medios de comunicación.
+
+Cuando preguntes por integraciones:
+- ✅ Pregunta: "¿Con qué **CRM o herramientas empresariales** necesitas integrar el agente? Por ejemplo: HubSpot, Salesforce, Zoho CRM, Pipedrive, etc."
+- ❌ NUNCA menciones WhatsApp, Messenger o redes sociales como opciones de integración
+
 Información requerida (solo pregunta lo que NO esté confirmado):
 1. Sitio web de la empresa (companyWebsite)
 2. Para qué usarán el agente (agentPurpose)
-3. Plataformas de integración (integrations - array)
+3. **Integraciones con CRMs y herramientas empresariales** (integrations - array) - IMPORTANTE: Pregunta SOLO por CRMs (HubSpot, Salesforce, etc.), NO por canales de comunicación
 4. Conversaciones ideales de ejemplo (idealConversations - array)
 5. Preguntas frecuentes (faq - array)
 6. Servicios que NO ofrece la AI (excludedServices - array)
@@ -178,7 +190,11 @@ Cuando tengas TODOS los campos requeridos (companyWebsite, agentPurpose, integra
               properties: {
                 companyWebsite: { type: "string" },
                 agentPurpose: { type: "string" },
-                integrations: { type: "array", items: { type: "string" } },
+                integrations: { 
+                  type: "array", 
+                  items: { type: "string" },
+                  description: "CRM systems and business tools (e.g., HubSpot, Salesforce, Zoho, Pipedrive). NOT communication channels like WhatsApp or Messenger."
+                },
                 idealConversations: { type: "array", items: { type: "string" } },
                 faq: { type: "array", items: { type: "string" } },
                 excludedServices: { type: "array", items: { type: "string" } },
