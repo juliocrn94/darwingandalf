@@ -1,13 +1,20 @@
-import { Mic, Square, Pause, Play, RotateCcw, Send } from "lucide-react";
+import { Mic, Square, Pause, Play, RotateCcw, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
 
 interface AudioRecorderProps {
-  onRecordingComplete: (blob: Blob) => void;
+  onTranscriptionComplete: (text: string) => void;
 }
 
-export const AudioRecorder = ({ onRecordingComplete }: AudioRecorderProps) => {
+export const AudioRecorder = ({ onTranscriptionComplete }: AudioRecorderProps) => {
+  const { toast } = useToast();
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [transcription, setTranscription] = useState("");
+
   const {
     isRecording,
     isPaused,
@@ -22,11 +29,60 @@ export const AudioRecorder = ({ onRecordingComplete }: AudioRecorderProps) => {
     formatTime,
   } = useAudioRecorder();
 
-  const handleSendRecording = () => {
-    if (audioBlob) {
-      onRecordingComplete(audioBlob);
+  // Transcribir automáticamente cuando se complete la grabación
+  useEffect(() => {
+    if (audioBlob && !transcription) {
+      transcribeAudio();
+    }
+  }, [audioBlob]);
+
+  const transcribeAudio = async () => {
+    setIsTranscribing(true);
+    try {
+      const formData = new FormData();
+      formData.append("audio", audioBlob!, `recording-${Date.now()}.webm`);
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/transcribe-audio`, {
+        method: "POST",
+        headers: {
+          apikey: supabaseAnonKey,
+          Authorization: `Bearer ${supabaseAnonKey}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al transcribir el audio");
+      }
+
+      const { transcription: text } = await response.json();
+      setTranscription(text);
+    } catch (error) {
+      console.error("Error transcribing:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo transcribir el audio",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTranscribing(false);
+    }
+  };
+
+  const handleSendTranscription = () => {
+    if (transcription.trim()) {
+      onTranscriptionComplete(transcription);
+      setTranscription("");
       resetRecording();
     }
+  };
+
+  const handleReset = () => {
+    setTranscription("");
+    resetRecording();
   };
 
   return (
@@ -37,11 +93,14 @@ export const AudioRecorder = ({ onRecordingComplete }: AudioRecorderProps) => {
           {!isRecording && !audioBlob && "Listo para grabar"}
           {isRecording && !isPaused && "Grabando..."}
           {isPaused && "Pausado"}
-          {audioBlob && "Grabación completada"}
+          {isTranscribing && "Transcribiendo audio..."}
+          {transcription && "Edita el texto antes de enviar"}
         </p>
-        <p className="text-3xl font-mono font-bold text-foreground">
-          {formatTime(recordingTime)}
-        </p>
+        {!transcription && (
+          <p className="text-3xl font-mono font-bold text-foreground">
+            {formatTime(recordingTime)}
+          </p>
+        )}
       </div>
 
       {/* Main Record Button */}
@@ -86,16 +145,35 @@ export const AudioRecorder = ({ onRecordingComplete }: AudioRecorderProps) => {
         </div>
       )}
 
-      {/* Audio Preview */}
-      {audioUrl && (
+      {/* Loading State */}
+      {isTranscribing && (
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span className="text-sm">Transcribiendo audio...</span>
+        </div>
+      )}
+
+      {/* Transcription Editor */}
+      {transcription && !isTranscribing && (
         <div className="w-full space-y-4">
+          {/* Audio player para revisar */}
           <audio src={audioUrl} controls className="w-full" />
+          
+          {/* Textarea editable con transcripción */}
+          <Textarea
+            value={transcription}
+            onChange={(e) => setTranscription(e.target.value)}
+            placeholder="Texto transcrito..."
+            className="min-h-[120px]"
+          />
+          
+          {/* Botones de acción */}
           <div className="flex gap-2">
-            <Button onClick={handleSendRecording} className="flex-1">
+            <Button onClick={handleSendTranscription} className="flex-1" disabled={!transcription.trim()}>
               <Send className="w-4 h-4 mr-2" />
-              Enviar grabación
+              Enviar mensaje
             </Button>
-            <Button variant="outline" onClick={resetRecording}>
+            <Button variant="outline" onClick={handleReset}>
               <RotateCcw className="w-4 h-4" />
             </Button>
           </div>

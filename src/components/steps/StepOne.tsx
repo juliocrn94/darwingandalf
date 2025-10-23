@@ -32,10 +32,10 @@ export const StepOne = ({ onDataChange }: StepOneProps) => {
     onDataChange(null);
   };
 
-  const handleAudioRecording = (blob: Blob) => {
+  const handleAudioRecording = (text: string) => {
     onDataChange({
-      type: "audio_recording",
-      content: blob,
+      type: "text",
+      content: text,
     });
   };
 
@@ -160,7 +160,7 @@ export const StepOne = ({ onDataChange }: StepOneProps) => {
                     {isSelected && (
                       <div className="animate-in fade-in slide-in-from-top-2 duration-300">
                         {option.id === "record" && (
-                          <AudioRecorder onRecordingComplete={handleAudioRecording} />
+                          <AudioRecorder onTranscriptionComplete={handleAudioRecording} />
                         )}
                         {option.id === "upload" && (
                           <AudioUploader onFileSelect={handleAudioUpload} />

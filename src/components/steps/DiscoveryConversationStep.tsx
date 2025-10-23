@@ -70,32 +70,6 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseAnonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-  const requestTranscription = async (formData: FormData) => {
-    if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error("Supabase environment variables no configuradas");
-    }
-
-    const response = await fetch(`${supabaseUrl}/functions/v1/transcribe-audio`, {
-      method: "POST",
-      headers: {
-        apikey: supabaseAnonKey,
-        Authorization: `Bearer ${supabaseAnonKey}`,
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorPayload = await response.text();
-      throw new Error(errorPayload || "Error desconocido en la transcripción");
-    }
-
-    const payload = await response.json();
-    if (!payload?.transcription) {
-      throw new Error("La función no devolvió una transcripción");
-    }
-
-    return payload.transcription as string;
-  };
 
   const handleSendMessage = async (content: string) => {
     if (!content.trim() && activeTab === "text") return;
@@ -152,45 +126,6 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
     }
   };
 
-  const handleAudioRecording = async (blob: Blob) => {
-    setIsLoading(true);
-    setActiveTab("text"); // Cambiar a tab de texto antes de procesar
-    try {
-      const formData = new FormData();
-      formData.append("audio", blob, `recording-${Date.now()}.webm`);
-
-      const transcription = await requestTranscription(formData);
-      await handleSendMessage(transcription);
-    } catch (error) {
-      console.error("Error processing audio:", error);
-      toast({
-        title: "Error",
-        description: "No se pudo procesar el audio",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-    }
-  };
-
-  const handleAudioFile = async (file: File) => {
-    setIsLoading(true);
-    setActiveTab("text"); // Cambiar a tab de texto antes de procesar
-    try {
-      const formData = new FormData();
-      formData.append("audio", file);
-
-      const transcription = await requestTranscription(formData);
-      await handleSendMessage(transcription);
-    } catch (error) {
-      console.error("Error processing audio file:", error);
-      toast({
-        title: "Error",
-        description: "No se pudo procesar el archivo de audio",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-    }
-  };
 
   const handleComplete = () => {
     if (isDiscoveryComplete) {
@@ -315,11 +250,46 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
           </TabsContent>
 
           <TabsContent value="audio">
-            <AudioRecorder onRecordingComplete={handleAudioRecording} />
+            <AudioRecorder onTranscriptionComplete={(text) => {
+              setActiveTab("text");
+              handleSendMessage(text);
+            }} />
           </TabsContent>
 
           <TabsContent value="upload">
-            <AudioUploader onFileSelect={handleAudioFile} />
+            <AudioUploader onFileSelect={async (file) => {
+              setIsLoading(true);
+              setActiveTab("text");
+              try {
+                const formData = new FormData();
+                formData.append("audio", file);
+
+                const response = await fetch(`${supabaseUrl}/functions/v1/transcribe-audio`, {
+                  method: "POST",
+                  headers: {
+                    apikey: supabaseAnonKey,
+                    Authorization: `Bearer ${supabaseAnonKey}`,
+                  },
+                  body: formData,
+                });
+
+                if (!response.ok) {
+                  throw new Error("Error al transcribir el audio");
+                }
+
+                const { transcription } = await response.json();
+                await handleSendMessage(transcription);
+              } catch (error) {
+                console.error("Error processing audio file:", error);
+                toast({
+                  title: "Error",
+                  description: "No se pudo procesar el archivo de audio",
+                  variant: "destructive",
+                });
+              } finally {
+                setIsLoading(false);
+              }
+            }} />
           </TabsContent>
         </Tabs>
       </Card>
