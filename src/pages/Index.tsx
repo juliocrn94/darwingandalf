@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
-import { Stepper } from "@/components/Stepper";
+import { ProgressSidebar } from "@/components/ProgressSidebar";
 import { DiscoveryConversationStep } from "@/components/steps/DiscoveryConversationStep";
 import { SelectAgentStep } from "@/components/steps/SelectAgentStep";
 import { FlowTestStep } from "@/components/steps/FlowTestStep";
@@ -94,22 +94,31 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="w-full">
-        <div className="max-w-6xl mx-auto px-8 py-8">
-          <Stepper steps={steps} currentStep={currentStep} />
-          <div className="mt-8">{renderStep()}</div>
-
-          {currentStep < steps.length - 1 && currentStep !== 0 && currentStep !== 2 && (
-            <div className="flex justify-end mt-8">
-              <Button
-                onClick={handleNext}
-                disabled={!isStepValid()}
-                size="lg"
-                className="gap-2"
-              >
-                Siguiente <ArrowRight className="w-4 h-4" />
-              </Button>
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            {/* Sidebar con progreso - oculto en móvil */}
+            <div className="hidden lg:block">
+              <ProgressSidebar steps={steps} currentStep={currentStep} />
             </div>
-          )}
+            
+            {/* Contenido principal */}
+            <div className="flex-1 w-full">
+              {renderStep()}
+              
+              {currentStep < steps.length - 1 && currentStep !== 0 && currentStep !== 2 && (
+                <div className="flex justify-end mt-8">
+                  <Button
+                    onClick={handleNext}
+                    disabled={!isStepValid()}
+                    size="lg"
+                    className="gap-2"
+                  >
+                    Siguiente <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </main>
     </div>
