@@ -17,7 +17,7 @@ export const ProgressSidebar = ({ steps, currentStep }: ProgressSidebarProps) =>
   return (
     <>
       {/* Desktop version - vertical sidebar */}
-      <Card className="hidden lg:block w-64 p-6 bg-card border-border sticky top-6 h-fit">
+      <Card className="hidden lg:block w-64 p-6 bg-card border-border sticky top-6 h-fit self-start">
         <h3 className="text-lg font-bold text-foreground mb-6">Progreso</h3>
         <div className="space-y-6">
           {steps.map((step, index) => (
