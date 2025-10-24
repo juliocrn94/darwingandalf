@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Agent } from "@/types/agent";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Users, Clock } from "lucide-react";
+import { TrendingUp, Users, Clock, ArrowLeft } from "lucide-react";
 
 interface AgentTemplate extends Agent {
   metrics?: {
@@ -26,12 +27,14 @@ interface SelectAgentStepProps {
   discoverySessionId: string;
   onAgentSelect: (agentId: string) => void;
   selectedAgentId: string | null;
+  onBack?: () => void;
 }
 
 export const SelectAgentStep = ({
   discoverySessionId,
   onAgentSelect,
   selectedAgentId,
+  onBack,
 }: SelectAgentStepProps) => {
   const { toast } = useToast();
   const [templates, setTemplates] = useState<AgentTemplate[]>([]);
@@ -72,6 +75,13 @@ export const SelectAgentStep = ({
 
   return (
     <div className="space-y-6">
+      {onBack && (
+        <Button variant="ghost" onClick={onBack} className="gap-2">
+          <ArrowLeft className="w-4 h-4" />
+          Volver
+        </Button>
+      )}
+      
       <div>
         <h2 className="text-3xl font-bold text-foreground mb-2">Seleccionar Template Base</h2>
         <p className="text-muted-foreground">

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Rocket, CheckCircle2, Download } from "lucide-react";
+import { Rocket, CheckCircle2, Download, ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -12,12 +12,14 @@ interface DarwinCreationStepProps {
   agentId: string;
   agentName: string;
   discoveryData: any;
+  onBack?: () => void;
 }
 
 export const DarwinCreationStep = ({
   agentId,
   agentName: initialAgentName,
   discoveryData,
+  onBack,
 }: DarwinCreationStepProps) => {
   const { toast } = useToast();
   const [agentName, setAgentName] = useState(initialAgentName);
@@ -101,6 +103,13 @@ export const DarwinCreationStep = ({
 
   return (
     <div className="space-y-6">
+      {onBack && (
+        <Button variant="ghost" onClick={onBack} className="gap-2">
+          <ArrowLeft className="w-4 h-4" />
+          Volver
+        </Button>
+      )}
+      
       <div>
         <h2 className="text-3xl font-bold text-foreground mb-2">Crear Agente en Darwin</h2>
         <p className="text-muted-foreground">

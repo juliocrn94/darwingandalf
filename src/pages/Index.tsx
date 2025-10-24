@@ -43,6 +43,12 @@ const Index = () => {
     }
   };
 
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
   const isStepValid = () => {
     switch (currentStep) {
       case 0:
@@ -68,6 +74,7 @@ const Index = () => {
             discoverySessionId={discoverySessionId}
             onAgentSelect={handleAgentSelect}
             selectedAgentId={selectedAgentId}
+            onBack={handleBack}
           />
         );
       case 2:
@@ -75,6 +82,7 @@ const Index = () => {
           <FlowTestStep
             agentId={selectedAgentId!}
             onComplete={handleFlowComplete}
+            onBack={handleBack}
           />
         );
       case 3:
@@ -83,6 +91,7 @@ const Index = () => {
             agentId={selectedAgentId!}
             agentName={agentName}
             discoveryData={discoveryData}
+            onBack={handleBack}
           />
         );
       default:

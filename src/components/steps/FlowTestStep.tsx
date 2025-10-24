@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Edit } from "lucide-react";
+import { Send, Edit, ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -23,9 +23,10 @@ interface FlowNode {
 interface FlowTestStepProps {
   agentId: string;
   onComplete: () => void;
+  onBack?: () => void;
 }
 
-export const FlowTestStep = ({ agentId, onComplete }: FlowTestStepProps) => {
+export const FlowTestStep = ({ agentId, onComplete, onBack }: FlowTestStepProps) => {
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
@@ -132,6 +133,13 @@ export const FlowTestStep = ({ agentId, onComplete }: FlowTestStepProps) => {
 
   return (
     <div className="space-y-6">
+      {onBack && (
+        <Button variant="ghost" onClick={onBack} className="gap-2">
+          <ArrowLeft className="w-4 h-4" />
+          Volver
+        </Button>
+      )}
+      
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-foreground mb-2">Diagrama de Flujo & Prueba</h2>
