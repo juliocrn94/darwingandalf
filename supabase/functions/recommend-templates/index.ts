@@ -239,10 +239,36 @@ Devuelve un ranking de templates con scores del 0-100, explicando brevemente por
           totalConversations: Math.floor(Math.random() * 5000) + 1000 // 1000-6000
         }
       };
-    }).sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0)).slice(0, 6); // Top 6
+    }).sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+
+    // Seleccionar top 3 de diferentes industrias
+    const selectedTemplates: any[] = [];
+    const usedIndustries = new Set<string>();
+
+    for (const template of templatesWithMetrics) {
+      if (selectedTemplates.length >= 3) break;
+      
+      // Si la industria no ha sido usada, agregar el template
+      if (!usedIndustries.has(template.industry)) {
+        selectedTemplates.push(template);
+        usedIndustries.add(template.industry);
+      }
+    }
+
+    // Si no llegamos a 3 templates, agregar los mejores restantes sin filtro de industria
+    if (selectedTemplates.length < 3) {
+      for (const template of templatesWithMetrics) {
+        if (selectedTemplates.length >= 3) break;
+        if (!selectedTemplates.find(t => t.id === template.id)) {
+          selectedTemplates.push(template);
+        }
+      }
+    }
+
+    const finalTemplates = selectedTemplates;
 
     return new Response(
-      JSON.stringify({ templates: templatesWithMetrics }),
+      JSON.stringify({ templates: finalTemplates }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
