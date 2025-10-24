@@ -1,0 +1,452 @@
+Industry: Marketing Workers Goals: Contexto del caso
+
+Carma Digital usará IA para su propia captación (Alba-Carma) y también para un proyecto inmobiliario donde operan como contact center (Alba-Inmobiliaria). Cada flujo trabaja con su número de WhatsApp y su pipeline en HubSpot.
+
+Worker AI Goals Alba (Carma)
+
+Atender leads por WhatsApp sobre servicios de marketing (Paid Media, Social/Content, SEO, Web/LP, Automation/CRM, Branding).
+Calificar dolor y encaje (objetivo, canales actuales, presupuesto, timing, rol).
+Crear/actualizar Contact + Deal en HubSpot, asignar owner, etapa y próximo paso (llamada/diagnóstico/demo).
+Enviar credenciales/casos y coordinar reunión con el ejecutivo.
+Límites: no prometer precios/SLAs/resultados; negociaciones → comercial.
+
+Worker AI Goals Alba (Inmobiliaria https://www.llortinmobiliaria.com/)
+
+Atender por WhatsApp leads de compra/arrendo/venta.
+Identificar proyecto desde Google Sheets (6 proyectos), enviar ficha/enlace.
+Calificar (zona, presupuesto/forma de pago, tipología, horizonte, visita).
+Crear/actualizar Contact + Deal en HubSpot (pipeline Inmobiliario) con proyecto y próximo paso (llamada con agente / visita).
+Tomar día/franja preferidos para visita (confirmación final la hace el agente).
+Límites: sin confirmar tasación/crédito/disponibilidad final; derivar a agente.
+Integrations: Yes - Hubspot
+Workers qualification criteria: Alba (Carma)
+
+Obligatorios (preguntas mínimas):
+¿Qué servicio te interesa? (Paid Media / Social / SEO / Web / Automation / Branding)
+¿Cuál es tu objetivo principal? (Leads / Ventas e-com / Awareness)
+¿Cuál es tu presupuesto mensual aprox.? (rango)
+¿Para cuándo te gustaría empezar? (ahora / 30–90 / >90 días)
+¿Cuál es tu rol? (decisor / evaluador)
+Datos: Nombre, Empresa, Whats/email
+Opcionales (no determinantes): sitio web, canales activos, stack (Meta/Google/HubSpot), mercado/país.
+
+Alba (Inmobiliaria https://www.llortinmobiliaria.com/ )
+
+Obligatorios (preguntas mínimas):
+¿Buscás comprar o arrendar?
+¿Qué proyecto te interesa? (o tipo de propiedad: depto/casa/local)
+¿En qué comuna/sector?
+¿Cuál es tu presupuesto o forma de pago? (contado/financiación)
+¿Para cuándo te gustaría mudarte? (ahora / 30–90 / >90 días)
+¿Querés coordinar visita? (sí/no + día/franja)
+Datos: Nombre y WhatsApp
+Opcionales (no determinantes): m², dormitorios/baños, estacionamiento, mascotas; para vendedores: dirección aprox., m², año, fotos.
+Pain: La atención humana es pesima para cobranzas. No puede hacer más campañas para traer leads porq los vendedores se quejan de que es mucho trabajo.
+
+
+Workers Goals: Alba: Debe recomendar productos en base a lo que solicite el cliente, sus consultas tienen 3 niveles.
+1er nivel: Preguntas frecuentes (horarios, tiendas, etc)
+2do nivel: Preguntas por productos y validar si existen y recomendar segun el uso.
+3er nivel: Preguntas mas complejas y muy muy tecnicas, esas serán derivadas a un ejecutivo en una primera etapa hasta que la AI este lista para responder ese nivel de complejidad.
+
+Sophia: Debe apoyar en el postventa, ayuda en solicitud de cambios, reparaciones, seguimiento de envios, etc.
+
+Para ambos casos debemos estar si o si integrados a VTEX que es su CMS donde tienen alojado su ecommerce (API: https://developers.vtex.com/docs/api-reference) y Salesforce (https://developer.salesforce.com/docs/einstein/genai/references/about/about-genai-api.html)
+
+
+Industry: Retail
+Integrations: Vtex (https://developers.vtex.com/docs/api-reference)
+Sales force (https://developer.salesforce.com/docs/einstein/genai/references/about/about-genai-api.html)
+Workers qualification criteria: Alba (debe tener una personalidad muy de asesora):
+- Saludar y preguntar de manera muy amable en que podemos ayudarlos.
+- Resolver de inmediato si es una pregunta frecuente.
+- Si es una pregunta de un producto, asesorar y preguntar.
+1) Quieres que te recomiende alguna opcion?
+2) Para que necesitas utilizarlo? Lo necesitas para tu hogar o lo necesitas profesionalmente?
+3) Si lo necesita profesionalmente puedes recomendarle un asesor
+4) si lo necesita para el hogar recomendarle diferentes productos segun precios
+
+Sophia (debe ser muy amable y dispuesta a solucionar todos los problemas)
+- Saludar y preguntar en que podemos ayudarlos
+- Entener si es devolucion y segun eso explicar politicas de devolución.
+- Si es seguimiento solicitar numero de compra o de orden
+- Si necesita asesoramiento tecnico derivar con el especialista
+Pain: hacen todo manual
+
+
+Industry: Real State Workers Goals: Calificar al cliente y eventualmente agendar una reunión, el tiene un proce definido y aun no decide si quiere que agenden o no.
+Integrations: Zoho CRM
+Workers qualification criteria: Información básica del cliente:
+
+Nombre completo
+Número de teléfono o WhatsApp
+Correo electrónico (en algunos casos)
+
+Detalles sobre lo que busca el cliente:
+
+Tipo de propiedad (alquiler o compra)
+Presupuesto estimado o rango de precios
+Necesidades particulares (como la vista, número de habitaciones, cercanía a ciertos lugares)
+
+Información adicional para la calificación:
+
+Tiempo que lleva buscando o interés en el proyecto
+Datos laborales, como el tiempo en el empleo o ingreso (según la demo)
+Proyecto o propiedad específica de interés (en el ejemplo de real estate del cliente)
+Otros detalles relevantes (según la conversación):
+
+Necesidad de crédito o financiación aprobada
+Estado del interés (futuro, en proceso, etc.)
+Pain: Jacobo enfrenta el desafío de que muchos leads no responden después del contacto inicial, lo que enfría las oportunidades de venta. Además, busca integrar y automatizar el proceso de seguimiento para mejorar la eficiencia.  Industry: Automotive EVA — Soporte & Derivación
+
+Atender por WhatsApp y llamadas solicitudes sobre servicio de transporte/flete (cotización, retiro, estado, facturación/incidencias).
+
+Capturar datos clave del envío y derivar al equipo correcto (Operaciones/Rutas, Comercial, Facturación/Atención).
+
+Enviar FAQ rápidas (cobertura nacional, tipos de carga, ventanas de retiro/entrega, requisitos básicos) y confirmar recepción.
+
+SOFÍA — Post-venta (Operación & Citas/Soporte)
+
+Gestionar post-venta/operación: estado de envío, reprogramaciones, incidencias (demoras, daño, dirección), y POD/comprobantes.
+
+Abrir ticket (o caso) con resumen + adjuntos (fotos/videos) y escalar a Operaciones/Calidad cuando corresponda.
+
+Enviar confirmaciones/resúmenes (p. ej., nueva ventana de retiro/entrega) y cerrar con encuesta breve.
+Integrations: Yes - CRM propio que ya integramos en otros casos de Grupo Platino
+Workers qualification criteria: (Eva)
+
+Lead/caso válido: empresa o persona solicitando flete/transporte de carga dentro del país.
+
+Obligatorios: nombre + contacto (Whats/tel), empresa (si aplica), tipo de carga (breve), origen y destino, fecha/ventana de retiro, peso/volumen estimado, requerimientos (p. ej., estiba, grúa, acceso).
+
+Opcionales (no determinantes): frecuencia (único/recorrente), presupuesto estimado, condiciones de pago, restricciones de sitio.
+
+Derivación:
+
+Cotización nueva → Comercial.
+
+Programación/operación (retiro/entrega) → Operaciones/Rutas.
+
+Facturación/soporte → Backoffice/Atención.
+
+Límites: la IA no confirma tarifas ni slots definitivos; no asume compromisos de tiempos de tránsito sin validación del equipo.
+
+(Sofía)
+
+Ticket válido: consulta/incidencia sobre envío en curso o reciente (seguimiento, reprogramación, POD, reclamo).
+
+Obligatorios: nombre + contacto, referencia de envío/orden (si existe), origen/destino, fecha del retiro/entrega, tipo de carga, motivo (seguimiento/reprogramación/incidencia) y prioridad (Alta: seguridad/mercancía crítica; Media: demoras; Baja: consulta).
+
+Opcionales: fotos/videos, datos de sitio (contacto en muelle, horarios), instrucción de manejo.
+
+Reglas: reprogramar proponiendo 2–3 ventanas alternativas alineadas a operación; incidencias con riesgo/daño → escalar con evidencia; confirmar que tiempos/tarifas finales los valida Operaciones/Comercial.
+
+Límites: no define compensaciones ni SLA finales; temas técnicos/legales → equipo responsable.
+Pain: Respuesta lenta y desordenada a solicitudes de flete por Whats/llamadas, leads sin atender, derivaciones erróneas y reprogramaciones sin control (ventanas perdidas, costos de espera). Buscan IA para N1 + derivación correcta   Industry: Automotive Confirmar interés concreto y forma de pago, resolver dudas clave y avanzar el lead al próximo paso (test drive, cotización o precalificación).
+Integrations: por ahora no mas que calendario
+Workers qualification criteria: Validar rápidamente si el cliente está interesado en uno de los autos y si la forma de pago es contado o plan de ahorro. Además, resolver dudas básicas del auto para avanzar el lead al siguiente paso (test drive, cotización, envío de plan, etc.).
+    •    Nombre completo
+    •    Teléfono / WhatsApp
+    •    Email (si aplica)
+    •    Modelo(s) de interés
+    •    Forma de pago preferida: Contado / Plan de ahorro / Indeciso
+    •    Presupuesto estimado (rango)
+    •    Plazo de compra estimado (inmediato / 1 mes / 1–3 meses / >3 meses)
+Pain: cuello de botella en el tiempo de respuesta  Industry: Retail Workers Goals: Alba:
+
+Catálogo: detectar pedido de catálogo, enviar link/lista por categoría (o PDF si lo tienen) y marcar en Odoo la interacción (tag: catalogo_enviado + categoría).
+
+Presupuesto express: capturar SKU/categoría + cantidad + talla/norma + destino, armar cotización preliminar con precios de Odoo y crear cotización/opportunity para el ejecutivo (nota: “precios sujetos a confirmación”). (Puede ser presupuesto en texto)
+
+FAQs N1: responder consultas frecuentes (normas/certificaciones, talles, equivalencias, medios de pago, entrega/devoluciones, garantías) y escalar cuando pidan negociación, volumen o validaciones técnicas.
+Integrations: Yes - Odoo (Zapier)
+Workers qualification criteria: Obligatorios:
+
+¿Catálogo? → categoría(s) y formato preferido (PDF).
+
+¿Presupuesto? → SKU o categoría, cantidad, talla/medidas, norma requerida, ciudad/entrega.
+
+Opcionales (no determinantes): marca preferida/equivalentes, plazo de compra.
+
+Registro en Odoo:
+
+Catálogo: oportunidad con tag catalogo.
+
+Presupuesto: cotización (líneas con SKU/cant/precio) + tag presupuesto.
+
+FAQ: oportunidad/tarea con tag faq.
+
+Límites (recordatorio): no confirmar stock/fechas/ descuentos ni garantías técnicas por chat; todo queda a confirmar por el ejecutivo.
+
+Catálogo: “¿De qué categoría necesitás? (guantes/calzado/cascos/arneses/…)Te envío el PDF y quedás con todo.”
+
+Presupuesto: “¿Me pasás SKU o categoría, cantidad, talla/medidas, norma y ciudad? Te preparo el presupuesto preliminar y lo elevo al ejecutivo.”
+
+FAQ: “Puedo ayudarte con talles, normas, pagos, entregas y garantías. Si es algo técnico/comercial avanzado, lo derivo al ejecutivo.”
+Pain: Muchos contactos no pueden atenderlos con el equipo humano actual   Industry: Software Workers Goals: En una primera instancia el worker AI deberá identificar la necesidad del cliente y derivar la consulta al Worker AI que corresponda:
+
+- Soporte: el worker recibirá consultas sobre casos que ya escalaron anteriormente, sobre tickets que crearon en el sistema, y también sobre personas que quieren reportar algo. La idea es poder brindar información buscando dentro del sistema de soporte y respondiendo con FAQs.
+
+- Ventas: el worker deberá calificar a los leads y agendar citas en las agendas de 2 vendedoras.
+
+- Area financiera: suelen llegar consultas para reportar pagos. El worker AI deberá recibir el comprobante y mandarlo al financiero.
+Integrations: Clienty para la parte de ventas y su sistema propio de soporte y tickets.
+Workers qualification criteria: El worker AI deberá entender si el cliente se comunica por Soporte, porque quieren conocer más del producto o comprar, o si quieren reportar un pago o conocer la deuda.
+Pain: Muchos tickets de soporte sin atencion, no tienen automatizado el proceso y necesitan muchos humanos.  Industry: Real State Workers Goals: Alba: Atender los leads que llegan de las campañas y de manera orgánica para conocer su interés. Debera compartir opciones de inmuebles segun su necesidad y el objetivo es generar una visita, creará el evento en el calendario de Rocio y asignar el lead con el resumen.
+Bruno: se activará para hacer campañas en whastapp y llamados telefonicos
+Integrations: google Calendar, su sitio web
+Workers qualification criteria: Debe preguntar si hace mucho que esta buscando o recientemente, que tipo de inmueble tiene interés, cantidad de habitaciones y m2, presupuesto estimado.
+Pain: Rocío necesita una solución que le permita automatizar y optimizar varias tareas en su negocio inmobiliario. En concreto, requiere que la IA pueda responder automáticamente a los correos electrónicos, mensajes de WhatsApp y llamadas telefónicas de sus clientes, sin necesidad de su intervención constante, permitiéndole así ahorrar tiempo y mejorar la atención. Además, busca que esta tecnología pueda:
+
+Agendar reuniones con clientes y sincronizarse con su calendario.
+Gestionar comunicaciones en varios idiomas, ya que en su zona predominan clientes extranjeros.
+Atender llamadas telefónicas y responder de manera natural y empática.
+Integrarse con su CRM para recoger y gestionar información de clientes y leads, incluyendo detalles específicos y campos personalizados.
+Recalificar y segmentar clientes según sus intereses y necesidades.
+Generar reportes y métricas sobre las interacciones y campañas.
+En resumen, necesita una herramienta que funcione como un asistente virtual integral, que le ayude a captar, atender y gestionar clientes de manera más eficiente, sin dejar de ser natural, empática y adaptada a su estilo de trabajo.   Industry: Real State Workers Goals: En este caso vamos a estar desarrollando dos alba para calificar a los prospectos, son distintas porque básicamente son dos proyectos de desarrollo inmobiliario distintos con dos números de WhastApp por separado
+Integrations: No aún
+Workers qualification criteria: En definición antes del pago actualizo  Industry: Real State Workers Goals: Atender a los leads que llegan de las campañas, informandole las informaciones del inmueble de interés y conseguir agendar una visita con uno de los 6 personas del equipo.
+* Agendar reuniones en calendar según horarios disponible
+* Por lo menos dos plantillas de meta (una para retomar la conversación con alguien que no responde y otra con el recordatorio de reunión)
+* Los leads calificados se agregan a un Google sheets y se notifica por mail
+Integrations: Google Calendar, Google sheet, correo electronico
+Workers qualification criteria: inmueble de interés, tipo de vivienda, presupuesto, metros cuadrados, cantidad de dormitorios, barrio. Debe tener una personalidad comercial.
+Pain: Hacen todo manual, y les gustaria escalar la cantidad de leads automatizando tareas  Industry: Automotive Workers Goals: Diseñar e implementar un asistente virtual conversacional especializado en el sector automotriz, capaz de cubrir todo el ciclo comercial: desde la recepción del lead hasta la gestión de cobranza, con integración a CRM y ERP.
+funciones del asistente
+ Funciones del Asistente
+    1.    Recepción del Lead
+    •    Vía formulario web, WhatsApp, Instagram, Meta Ads, etc.
+    •    Detecta canal, intención y tipo de cliente (nuevo, en seguimiento, en cobranza).
+    2.    Calificación Conversacional (Automated)
+    •    Pregunta de forma conversacional:
+    •    ¿Qué tipo de vehículo te interesa?
+    •    ¿Tenés algun modelo en mente?
+    •    ¿Buscás financiar, pagar al contado o un plan de ahorro?
+    •    ¿Tenés un presupuesto estimado o preferís que te mostremos opciones?
+    •    No insiste si el cliente no quiere responder ciertos puntos.
+    •    En paralelo, autocompleta Smart Fields, incluso si Marketing/Comercial aún no definió todos.
+    3.    Smart Field Completion (Automático)
+    •    Extrae de forma contextual:
+    •    Intención de compra
+    •    Tipo de vehículo
+    •    Urgencia estimada
+    •    Si ya tiene o no un plan
+    •    Presupuesto (si lo menciona)
+    •    Envia estos campos enriquecidos al CRM como propiedades del contacto o de la oportunidad.
+    4.    Derivación Automática
+    •    Si es venta 0 km contado → equipo de ventas tradicional
+    •    Si es plan de ahorro → equipo especializado
+    •    Si es postventa / reclamo / cobranza → equipo operativo
+    •    Permite segmentar por región / sucursal si aplica
+    5.    Agendamiento con Calendario
+    •    Propone turnos en base a agenda conectada
+    •    Confirma cita por WhatsApp
+    •    Envía recordatorio 24 hs antes y otro 1 h antes (puede ser por voz TTS)
+    6.    Recordatorios de Cobranzas
+    •    Detecta desde ERP/CRM si hay pagos vencidos
+    •    Envia mensajes proactivos:
+    •    “Hola, notamos una cuota vencida. ¿Querés que te recuerde cómo pagar o derivarte con alguien?”
+    •    Puede llamar al cliente con TTS + webhook si hay silencio por varios días
+    •    Agenda llamada humana si es necesario
+    7.    Postventa & Fidelización
+    •    Envía encuesta NPS
+    •    Sugiere promociones por renovación o service
+    •    Puede volver a iniciar ciclo comercial
+    8.    Integraciones
+    •    CRM :
+    •    Crea/actualiza contacto
+    •    Crea oportunidad
+    •    Añade etiquetas: Lead Calificado, Plan Activo, Cobranza Pendiente
+    •    ERP:
+    •    Consulta estado de cuenta
+    •    Verifica si está en mora
+    •    Actualiza estado de cobranza
+Integrations: si con su CRM y ERP
+Workers qualification criteria: 1. Usuario inicia contacto
+2. Asistente detecta intención → precalifica (conversacional)
+3. Completa Smart Fields
+4. Deriva automáticamente según tipo de producto
+5. Agenda reunión / llamada con asesor
+6. Envía recordatorios
+7. (Si aplica) Detecta deuda → recordatorio / llamada
+8. Deriva a humano si no hay respuesta o si cliente lo prefiere
+9. Realiza seguimiento posventa o reenganche comercial
+Pain: actualmente sienten que estan perdiendo ventas por no filtrar de manera exitosa a sus clientes y por un lento tiempo de respuesta por parte de sus asesores (edited)    Industry: Automotive Workers Goals: Alba (pré-ventas)
+
+Atender por WhatsApp consultas de venta (0 km, financiación, test drive, cotización).
+Calificar y registrar el lead en la planilla del piloto (Sheets); derivar al asesor comercial según calificación.
+Enviar fichas/modelos y proponer test drive (tomar día/franja preferidos; la confirmación la hace el asesor).
+Si es tema de servicio, pasar a Sofía con contexto.
+
+Bruno (outbound · seguimiento/reativación)
+
+Trabajar por WhatsApp listas de leads fríos (30/60/90 días), cotizaciones sin respuesta y test drives pendientes.
+Enviar cápsulas de valor/modelos vigentes y proponer próximo paso (llamada con asesor / test drive / cotización actualizada).
+Registrar respuesta en planilla y actualizar estado (contactado, reagendado, sin respuesta, no interesado); escalar al asesor cuando haya interés.
+
+Sofía (post-venta · citas de servicio)
+
+Atender por WhatsApp pedidos de mantenimiento, diagnóstico, garantía/recall, carrocería.
+Tomar fecha/franja preferidas y crear pre-cita en la planilla del piloto (o registrar preferencia); asignar asesor y enviar resumen al cliente.
+Escalar a asesor/taller ante garantías/recalls/fallas críticas o a pedido del cliente.
+
+Nota: toda la actividad se registra en planilla y se notifica a asesores por el canal acordado. En Fase 2 se integra a SICOP.
+Integrations: No en esta etapa
+Workers qualification criteria: Alba
+
+Lead válido: persona interesada en comprar/financiar/probar unidad.
+Obligatorios: nombre, Whats, intención (compra/permuta/financiación/test drive), modelo/versión de interés, sucursal preferida, horizonte (inmediato/30–90/>90 días).
+Opcionales (no determinantes): presupuesto/rango, vehículo en parte de pago, crédito preaprobado.
+Registro/Handoff: cargar en planilla piloto + notificar al asesor correspondiente.
+Límites: sin prometer precio/bonos/tiempos finales; disponibilidad la confirma el asesor.
+
+Bruno
+
+Campos por contacto: nombre, Whats, interés (modelo), última interacción, sucursal, próximo paso sugerido.
+Acción por respuesta:
+Sí → pasar a asesor + anotar en planilla.
+Tal vez → enviar material + agendar seguimiento (3/7/14 días).
+No/opt-out → marcar y no insistir.
+Límites: no cotiza ni define financiación; dudas técnicas/comerciales → asesor.
+
+Sofía
+
+Ticket válido: solicitud/consulta de cita de servicio.
+Obligatorios: nombre, Whats, modelo/año, VIN/placa (si tiene), km, tipo de servicio, sucursal, fecha/franja preferidas.
+Opcionales (no determinantes): forma de pago, valet/espera, descripción de síntomas.
+Reglas: si la franja no está disponible, ofrecer 2–3 alternativas; avisar que la confirmación final la realiza el asesor.
+Límites: sin prometer tiempos/costos ni definir cobertura; técnico/legal → asesor.
+Pain: Atención limitada al horário comercial y chatbot deficiente.  Industry: Automotive Workers Goals: Alba (pré-ventas)
+Atender por Whats: 0 km, seminuevos, financiación, test drive, cotización.
+Calificar y abrir oportunidad en SICOP; asignar asesor por sucursal/portafolio.
+Enviar material de modelos y registrar preferencia de test drive (confirmación por el asesor).
+Consultas de servicio → derivar a Sofía.
+
+Bruno (outbound · reactivación)
+Tomar desde SICOP leads fríos (30/60/90) y oportunidades sin avance.
+Ofrecer siguiente paso (llamada con asesor / test drive / actualización de oferta) y registrar respuesta.
+Mantener histórico y estatus en SICOP.
+
+Sofía (pos-venta · agendamiento de servicio)
+Atender mantenimiento/diagnóstico/garantía-recall/carrocería por Whats.
+Tomar fecha/franja y crear la cita en SICOP (o registrar preferencia); enviar confirmación y checklist.
+Escalar a asesor/taller en garantías, recalls, fallas críticas o a pedido del cliente.
+Integrations: Yes - Sicop
+Workers qualification criteria: Alba
+Obligatorios: nombre, contacto, intención, modelo de interés, sucursal, horizonte, presupuesto/rango o forma de pago.
+Opcionales: parte de pago, crédito preaprobado.
+Límites: sin prometer precio/bonos/tiempos; disponibilidad la confirma el asesor.  Industry: Real State Workers Goals: Alba:
+En una primera etapa comenzaremos en la vertical de floreria del parque jazmin, esa vertical es bastante importante para ellos ya que es uno de los grandes valores agregados que tiene el cementerio, eso les permite a los clientes poder agregar servicios de floreria a sus difuntos mensualmente, semanalmente o en fechas importantes, por ende el worker debe asesorar a los clientes en que tipo de servicio de floreria desea contratar
+Integrations: Lo mas probable al catalogo, pero nada via api
+Workers qualification criteria: 1. Saludo y reconocimiento
+
+El cliente inicia con un saludo por WhatsApp.
+
+El AI responde con un saludo empático y reconocimiento del contexto:
+
+"Hola 
+￼
+, gracias por escribirnos. Entendemos lo importante que es recordar a sus seres queridos. Soy su asistente de florería, ¿cómo puedo ayudarle hoy?"
+
+2. Detección de intención
+
+El AI identifica que el lead busca un servicio de florería.
+
+Confirma la necesidad:
+
+"¿Desea enviar un arreglo floral para la tumba de su ser querido?"
+
+3. Presentación de opciones de servicio
+
+El AI ofrece diferentes planes y clasifica según el interés del lead:
+
+Servicio único
+
+"Puede solicitar un servicio único, para ocasiones especiales o urgentes."
+
+Planes de suscripción
+
+Mensual: flores nuevas una vez al mes.
+
+Semanal: flores frescas todas las semanas.
+
+Fechas importantes: recordatorios automáticos (aniversarios, cumpleaños, día de la madre, etc.).
+
+"También contamos con planes de suscripción: mensual, semanal o por fechas importantes que usted elija."
+
+4. Recolección de datos mínimos (calificación de lead)
+
+El AI hace preguntas claves para calificar:
+
+Nombre del difunto y ubicación exacta de la tumba.
+
+Tipo de servicio que le interesa (único / plan).
+
+Presupuesto aproximado (opcional).
+
+Datos de contacto para confirmación.
+
+"¿Podría indicarme el nombre del difunto y la ubicación en el cementerio? Así puedo verificar disponibilidad y enviarle opciones."
+
+5. Ofrecimiento de upsell/cross-sell
+
+Dependiendo de la respuesta, el AI puede sugerir:
+
+Accesorios (velas, placas conmemorativas, tarjetas).
+
+Paquetes combinados (flores + limpieza básica del área).
+
+6. Cierre y siguiente paso
+
+Si el lead está interesado:
+
+"Perfecto 
+￼
+, le enviaré un catálogo con fotos y precios para que elija. Una vez seleccionado, podrá pagar en línea y confirmaremos el servicio."
+
+7. Una vez listo el cliente se debe traspasar a un ejecutivo
+Pain: Tienen todos los proceso manuales y quieren ser proactivos  Industry: Real State Workers Goals: Alba (pré-ventas)
+Atender por Whats, llamadas e IG a inmobiliarias/brokers/proptech interesadas en Kutt.
+- Detectar dolor y encaje: captación/publicación de avisos, CRM/portales actuales, integraciones, website, reporting.
+Calificar BANT-lite (empresa, tamaño del equipo y carteras, autoridad/rol, necesidad, horizonte, presupuesto aprox.).
+- Segun eso recomendarle un plan (https://plataforma.kutt.cl/Cuenta/Registrarse)
+- Agendar demo con el AE correcto (por país/segmento) y dejar el lead completo en el CRM.
+- Enviar material (deck, casos, checklist de integración) y fijar próximo paso.
+
+Sofía (post-venta)
+
+-Atender clientes actuales por Whats, email y llamadas para onboarding y soporte N1 (configuración, usuarios, carga de propiedades, publicación en portales, integraciones básicas, facturación/pagos generales).
+- Guiar con how-to y checklists
+- Escalar a ejecutivo si lo necesitan
+- Señalar oportunidades de upsell/renovación al equipo comercial cuando aparezcan.
+
+Cobranza
+- Poder enviar información de pagos pendientes o por vencer
+- integrarse a su erp
+Integrations: erp interno de ellos
+escala CRM
+Workers qualification criteria: Alba
+1. **Interés en el Producto/Servicio**: Evaluar si el lead ha mostrado interés en el producto o servicio ofrecido.
+
+2. Target: identificar a que segmento corresponde el cliente segun el numero de propiedades (ultra light: 10 prop, light: 30 prop, Plus: 50 prop, Pro: 75 prop, Super: 100 prop, Gold: 150 prop
+
+3. Recomendarle un plan y si da el ok agendar una llamada con un ejecutivo
+
+4. Si el cliente dice que esta fuera de su presupuesto ser muy amable y deribarlo a un ejecutivo para que lo pueda ayudar.
+
+Sofia
+
+1. **Bienvenida**: Enviar un mensaje de bienvenida al cliente después de la compra.
+2. **Seguimiento**: Contactar al cliente después de un tiempo para preguntar sobre su experiencia con el producto.
+3. **Resolución de Problemas**: Si el cliente tiene un problema, ofrecer soluciones rápidas y efectivas.
+4. **Educación**: Proporcionar recursos adicionales, como tutoriales o guías, para ayudar al cliente a aprovechar al máximo su compra.
+5. Evitar churn: evitar la baja de clientes negociando la mantención y ayudarlo a mejorar su experiencia
+
+Lucas
+
+1. Notificar si el cliente tiene un pago pendiente
+2. ayudar al cliente a procesar su pago
+3. agendar con ejecutivo si tiene problemas de pago
+Pain: Javier menciona que tienen problemas con leads que no responden o quedan desatendidos, lo que afecta la eficiencia del proceso de ventas. También hay dificultades con la gestión manual de respuestas en redes sociales como Instagram, lo que consume tiempo y recursos.
+ 
