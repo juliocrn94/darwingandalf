@@ -20,6 +20,7 @@ interface Message {
 
 interface DiscoveryData {
   companyWebsite?: string;
+  companyDescription?: string;
   agentPurpose?: string;
   integrations?: string[];
   idealConversations?: string[];
@@ -27,6 +28,7 @@ interface DiscoveryData {
   excludedServices?: string[];
   requiredCustomerInfo?: string[];
   agentName?: string;
+  businessHours?: string;
 }
 
 interface DiscoveryConversationStepProps {
@@ -135,37 +137,39 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="text-center">
         <h2 className="text-3xl font-bold text-foreground mb-2">Conversación de Discovery</h2>
         <p className="text-muted-foreground">
           Conversemos para entender tu negocio y diseñar el agente perfecto
         </p>
       </div>
 
-      {/* Progress Tracker */}
-      <Card className="p-4 bg-gradient-card border-border">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-foreground">Progreso del Discovery</h3>
-          <Badge variant={isDiscoveryComplete ? "default" : "secondary"}>
-            {completedFields}/{requiredFields.length}
-          </Badge>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          {requiredFields.map((field) => (
-            <div key={field.key} className="flex items-center gap-2 text-sm">
-              {discoveryData[field.key as keyof DiscoveryData] ? (
-                <CheckCircle2 className="w-4 h-4 text-success" />
-              ) : (
-                <div className="w-4 h-4 rounded-full border-2 border-muted" />
-              )}
-              <span className="text-muted-foreground">{field.label}</span>
-            </div>
-          ))}
-        </div>
-      </Card>
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        {/* Progress Tracker - Collapsible on Left */}
+        <Card className="w-full lg:w-64 lg:sticky lg:top-6 p-4 bg-gradient-card border-border">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-foreground text-sm">Progreso</h3>
+            <Badge variant={isDiscoveryComplete ? "default" : "secondary"} className="text-xs">
+              {completedFields}/{requiredFields.length}
+            </Badge>
+          </div>
+          <div className="space-y-2">
+            {requiredFields.map((field) => (
+              <div key={field.key} className="flex items-center gap-2 text-sm">
+                {discoveryData[field.key as keyof DiscoveryData] ? (
+                  <CheckCircle2 className="w-4 h-4 text-success flex-shrink-0" />
+                ) : (
+                  <div className="w-4 h-4 rounded-full border-2 border-muted flex-shrink-0" />
+                )}
+                <span className="text-muted-foreground text-xs">{field.label}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
 
-      {/* Chat Interface */}
-      <Card className="p-6 bg-card border-border">
+        {/* Chat Interface */}
+        <div className="flex-1 w-full">
+          <Card className="p-6 bg-card border-border">
         <ScrollArea className="h-[400px] pr-4 mb-4">
           <div className="space-y-4">
             {messages.map((message, index) => (
@@ -292,19 +296,21 @@ export const DiscoveryConversationStep = ({ onDiscoveryComplete }: DiscoveryConv
             }} />
           </TabsContent>
         </Tabs>
-      </Card>
+          </Card>
 
-        {isDiscoveryComplete && (
-          <div className="w-full">
-            <Button 
-              onClick={handleComplete} 
-              size="lg" 
-              className="w-full gap-2 py-6 text-lg font-semibold"
-            >
-              Continuar a Selección de Template
-            </Button>
-          </div>
-        )}
+          {isDiscoveryComplete && (
+            <div className="w-full mt-6">
+              <Button 
+                onClick={handleComplete} 
+                size="lg" 
+                className="w-full gap-2 py-6 text-lg font-semibold"
+              >
+                Continuar a Selección de Template
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

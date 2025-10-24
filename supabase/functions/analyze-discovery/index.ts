@@ -63,11 +63,12 @@ Contenido del sitio web:
 ${scrapeResult.markdown.slice(0, 10000)}
 
 Extrae:
-- Descripción de la empresa
+- Descripción detallada de la empresa y su negocio
 - Servicios principales que ofrecen
-- Plataformas/integraciones mencionadas
-- Información de contacto
-- Preguntas frecuentes si las hay`
+- Plataformas/integraciones CRM mencionadas (HubSpot, Salesforce, etc.)
+- Horarios de atención o apertura
+- Preguntas frecuentes completas (FAQs)
+- Propón un propósito específico para un agente conversacional que atienda leads de esta empresa basándote en sus servicios y negocio`
                 },
                 {
                   role: "user",
@@ -82,15 +83,30 @@ Extrae:
                   parameters: {
                     type: "object",
                     properties: {
-                      companyDescription: { type: "string" },
+                      companyDescription: { 
+                        type: "string",
+                        description: "Descripción completa y detallada del negocio de la empresa"
+                      },
                       services: { type: "array", items: { type: "string" } },
                       crmIntegrations: { 
                         type: "array", 
                         items: { type: "string" },
                         description: "CRM and business systems mentioned (HubSpot, Salesforce, Zoho, etc.). NOT communication channels."
                       },
+                      businessHours: {
+                        type: "string",
+                        description: "Horarios de atención o apertura del negocio"
+                      },
                       contactInfo: { type: "string" },
-                      faq: { type: "array", items: { type: "string" } }
+                      faq: { 
+                        type: "array", 
+                        items: { type: "string" },
+                        description: "Lista completa de preguntas frecuentes con sus respuestas"
+                      },
+                      proposedAgentPurpose: {
+                        type: "string",
+                        description: "Propuesta específica de propósito para un agente conversacional que atienda leads, basado en los servicios y negocio de la empresa"
+                      }
                     }
                   }
                 }
@@ -110,8 +126,10 @@ Extrae:
               enrichedData = {
                 ...enrichedData,
                 companyWebsite: urls[0],
-                agentPurpose: parsed.companyDescription || enrichedData.agentPurpose,
+                companyDescription: parsed.companyDescription || enrichedData.companyDescription,
+                agentPurpose: parsed.proposedAgentPurpose || parsed.companyDescription || enrichedData.agentPurpose,
                 integrations: parsed.crmIntegrations || enrichedData.integrations,
+                businessHours: parsed.businessHours || enrichedData.businessHours,
                 faq: parsed.faq || enrichedData.faq,
               };
 
