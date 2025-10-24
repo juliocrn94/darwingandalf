@@ -15,51 +15,98 @@ interface ProgressSidebarProps {
 
 export const ProgressSidebar = ({ steps, currentStep }: ProgressSidebarProps) => {
   return (
-    <Card className="w-64 p-6 bg-card border-border sticky top-6 h-fit">
-      <h3 className="text-lg font-bold text-foreground mb-6">Progreso</h3>
-      <div className="space-y-6">
-        {steps.map((step, index) => (
-          <div key={step.id} className="flex gap-4">
-            <div className="flex flex-col items-center">
-              <div
-                className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-smooth flex-shrink-0",
-                  currentStep > index
-                    ? "bg-primary border-primary text-primary-foreground"
-                    : currentStep === index
-                    ? "bg-primary/10 border-primary text-primary"
-                    : "bg-background border-border text-muted-foreground"
+    <>
+      {/* Desktop version - vertical sidebar */}
+      <Card className="hidden lg:block w-64 p-6 bg-card border-border sticky top-6 h-fit">
+        <h3 className="text-lg font-bold text-foreground mb-6">Progreso</h3>
+        <div className="space-y-6">
+          {steps.map((step, index) => (
+            <div key={step.id} className="flex gap-4">
+              <div className="flex flex-col items-center">
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-smooth flex-shrink-0",
+                    currentStep > index
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : currentStep === index
+                      ? "bg-primary/10 border-primary text-primary"
+                      : "bg-background border-border text-muted-foreground"
+                  )}
+                >
+                  {currentStep > index ? (
+                    <Check className="w-5 h-5" />
+                  ) : (
+                    <span className="text-base font-semibold">{step.id}</span>
+                  )}
+                </div>
+                {index < steps.length - 1 && (
+                  <div
+                    className={cn(
+                      "w-0.5 h-12 mt-2 transition-smooth",
+                      currentStep > index ? "bg-primary" : "bg-border"
+                    )}
+                  />
                 )}
-              >
-                {currentStep > index ? (
-                  <Check className="w-5 h-5" />
-                ) : (
-                  <span className="text-base font-semibold">{step.id}</span>
-                )}
+              </div>
+              <div className="flex-1 pb-2">
+                <p
+                  className={cn(
+                    "font-semibold text-sm transition-smooth",
+                    currentStep >= index ? "text-foreground" : "text-muted-foreground"
+                  )}
+                >
+                  {step.title}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">{step.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Mobile version - horizontal bar */}
+      <Card className="lg:hidden w-full p-4 bg-card border-border mb-6">
+        <div className="flex items-center justify-between gap-2">
+          {steps.map((step, index) => (
+            <div key={step.id} className="flex items-center flex-1">
+              <div className="flex flex-col items-center w-full">
+                <div
+                  className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center border-2 transition-smooth flex-shrink-0",
+                    currentStep > index
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : currentStep === index
+                      ? "bg-primary/10 border-primary text-primary"
+                      : "bg-background border-border text-muted-foreground"
+                  )}
+                >
+                  {currentStep > index ? (
+                    <Check className="w-4 h-4" />
+                  ) : (
+                    <span className="text-xs font-semibold">{step.id}</span>
+                  )}
+                </div>
+                <p
+                  className={cn(
+                    "font-semibold text-xs mt-1 text-center transition-smooth",
+                    currentStep >= index ? "text-foreground" : "text-muted-foreground"
+                  )}
+                >
+                  {step.title}
+                </p>
               </div>
               {index < steps.length - 1 && (
                 <div
                   className={cn(
-                    "w-0.5 h-12 mt-2 transition-smooth",
+                    "h-0.5 flex-1 mx-1 transition-smooth",
                     currentStep > index ? "bg-primary" : "bg-border"
                   )}
                 />
               )}
             </div>
-            <div className="flex-1 pb-2">
-              <p
-                className={cn(
-                  "font-semibold text-sm transition-smooth",
-                  currentStep >= index ? "text-foreground" : "text-muted-foreground"
-                )}
-              >
-                {step.title}
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">{step.description}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </Card>
+          ))}
+        </div>
+      </Card>
+    </>
   );
 };
