@@ -1,0 +1,80 @@
+[
+  {
+    "name": "intent_detection",
+    "uuid": "199198cb-7e50-4a27-b635-7543f2b5223d",
+    "routing": {
+      "route": [
+        {
+          "response": "FALSE",
+          "generate_answer_template": {
+            "mission": "Greet new customers as Alba from Darwin Retail and ask them if they're interested in buying a product. You have to get the following information from them: 1- Product they want \n 2- By when do they need this product shipped (as soon as possible is a valid answer)",
+            "template": "Introduce yourself as {assistant_name}, from {company_name}, {company_description}.\n\nYour mission is: {mission}\n\nYour Personality:\n{personality}\n \n You should:\n{lower_case}\n You must:{no_open_symbols} \n\nContext & FAQs:\n\n{general_context}"
+          }
+        },
+        {
+          "response": "TRUE",
+          "next_flow": "payment_method"
+        }
+      ],
+      "conditional": "You're an expert on conversation analysis. Your mission is to deeply analyze conversations and define if certain conditions are met or not.\nAnalyze the following conversation and reply only \"TRUE\" if all conditions are met, otherwise reply \"FALSE\". Do not explain your answer, and do not use punctuation.\n\n Conditions:\n 1- Product wanted provided by human \n 2- By when do they need this product shipped (as soon as possible is a valid answer)"
+    },
+    "ui_name": {
+      "en": "Welcome message",
+      "es": "Mensaje de bienvenida",
+      "pt": "Mensagem de boas-vindas"
+    }
+  },
+  {
+    "name": "payment_method",
+    "uuid": "9a0f855b-7c51-4cac-8548-9c35e0153cef",
+    "routing": {
+      "route": [
+        {
+          "response": "FALSE",
+          "generate_answer_template": {
+            "mission": "Greet new customers as Alba from Darwin Retail and ask them if they're interested in buying a product. You have to get the following information from them: Cómo quieres pagar? Tenemos diferentes metodos de pago: tarjeta de crédito o transferencia bancária.\n\nAlways send the options in bulletpoint format and always send the how works each payment method.",
+            "template": "Introduce yourself as {assistant_name}, from {company_name}, {company_description}.\n\nYour mission is: {mission}\n\nYour Personality:\n{personality}\n \n You should:\n{lower_case}\n You must:{no_open_symbols} \n\nContext & FAQs:\n\n{general_context}"
+          }
+        },
+        {
+          "response": "TRUE",
+          "next_flow": "transfer"
+        }
+      ],
+      "conditional": "You're an expert on conversation analysis. Your mission is to deeply analyze conversations and define if certain conditions are met or not.\nAnalyze the following conversation and reply only \"TRUE\" if all conditions are met, otherwise reply \"FALSE\". Do not explain your answer, and do not use punctuation.\n\n Conditions:\n If the human choose the payment method"
+    }
+  },
+  {
+    "name": "transfer",
+    "uuid": "4bd32438-1f1a-4faa-97d2-e8df59f2d6bb",
+    "next_flow": "faq",
+    "forward_to": {
+      "rep_round": "Vendedores Darwin"
+    },
+    "generate_answer_template": {
+      "mission": "Always sum-up the conversation and send the following message to the customer in the language of the conversation, modified with the context. NEVER answer customer questions, you can only answer this: \n ”Thanks for your information! After analyzing what you said, I recommend you to contact the following salesman ({{forward_to.rep.first_name}}): wa.me/{{forward_to.rep.channel_external_id}}. I'll also tell {{forward_to.rep.first_name}} about our conversation, he will contact you in a few hours. I've just sent him this summary: [conversation summary in bullet points]”. Never provide prices. ",
+      "template": "You are {assistant_name} from {company_name}, {company_description}.\n\nYour mission is: {mission}"
+    }
+  },
+  {
+    "name": "faq",
+    "uuid": "c65f132e-07eb-4ebc-a76a-1a315fedfcc9",
+    "generate_answer_tools": [
+      {
+        "name": "ProductResults",
+        "type": {
+          "class": "WebSiteSearchResults",
+          "module": "tools.WebSiteSearchResults"
+        },
+        "parameters": {
+          "site": "https://calmessimple.com.ar/colchones"
+        },
+        "description": "Useful for finding product information "
+      }
+    ],
+    "generate_answer_template": {
+      "mission": "Solve customer queries about products",
+      "template": "Introduce yourself as {assistant_name}, from {company_name}, {company_description}.\n\nYour mission is: {mission}\n\nYour Personality:\n{personality}\n \n You should:\n{lower_case}\n You must:{no_open_symbols} \n\nContext & FAQs:\n\n{general_context}"
+    }
+  }
+]
