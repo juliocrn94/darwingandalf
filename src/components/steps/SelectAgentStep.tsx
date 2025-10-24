@@ -119,9 +119,13 @@ export const SelectAgentStep = ({
                       )}
                     </div>
                   </div>
-                  {template.matchScore && (
+                  {template.matchScore ? (
                     <Badge variant="default" className="text-sm shrink-0 ml-2">
                       {Math.round(template.matchScore)}% match
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary" className="text-sm shrink-0 ml-2">
+                      Disponible
                     </Badge>
                   )}
                 </div>
