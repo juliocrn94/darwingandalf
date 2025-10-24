@@ -106,6 +106,11 @@ Extrae:
                       proposedAgentPurpose: {
                         type: "string",
                         description: "Propuesta específica de propósito para un agente conversacional que atienda leads, basado en los servicios y negocio de la empresa"
+                      },
+                      painPoints: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "Specific pain points or problems mentioned"
                       }
                     }
                   }
@@ -218,6 +223,21 @@ Cuando tengas TODOS los campos requeridos (companyWebsite, agentPurpose, integra
                 excludedServices: { type: "array", items: { type: "string" } },
                 requiredCustomerInfo: { type: "array", items: { type: "string" } },
                 agentName: { type: "string" },
+                painPoints: {
+                  type: "array",
+                  items: { type: "string" },
+                  description: "Specific pain points or problems mentioned by the customer"
+                },
+                currentIntegrations: {
+                  type: "array",
+                  items: { type: "string" },
+                  description: "Systems/tools they currently use (CRM, ERP, etc.)"
+                },
+                desiredIntegrations: {
+                  type: "array",
+                  items: { type: "string" },
+                  description: "Integrations they want or need for the agent"
+                },
                 isComplete: { type: "boolean" }
               }
             }

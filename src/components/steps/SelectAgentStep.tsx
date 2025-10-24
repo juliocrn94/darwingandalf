@@ -8,12 +8,18 @@ import { TrendingUp, Users, Clock } from "lucide-react";
 
 interface AgentTemplate extends Agent {
   metrics?: {
-    averageConversion?: number;
-    averageSatisfaction?: number;
-    averageResponseTime?: number;
-    totalConversations?: number;
+    averageConversion: number;
+    averageSatisfaction: string;
+    averageResponseTime: number;
+    totalConversations: number;
   };
   matchScore?: number;
+  matchReason?: string;
+  workers_goals?: string;
+  integrations?: string;
+  qualification_criteria?: string;
+  pain?: string;
+  is_template?: boolean;
 }
 
 interface SelectAgentStepProps {
@@ -102,21 +108,47 @@ export const SelectAgentStep = ({
               <div className="space-y-4">
                 {/* Header with Match Score */}
                 <div className="flex items-start justify-between">
-                  <div>
+                  <div className="flex-1">
                     <h3 className="text-xl font-bold text-foreground">{template.name}</h3>
-                    <p className="text-sm text-muted-foreground">{template.industry}</p>
+                    <div className="flex gap-2 mt-1 flex-wrap">
+                      <Badge variant="secondary">{template.industry}</Badge>
+                      {template.integrations && (
+                        <Badge variant="outline" className="text-xs">
+                          {template.integrations}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                   {template.matchScore && (
-                    <Badge variant="default" className="text-sm">
+                    <Badge variant="default" className="text-sm shrink-0 ml-2">
                       {Math.round(template.matchScore)}% match
                     </Badge>
                   )}
                 </div>
 
+                {/* Match Reason */}
+                {template.matchReason && (
+                  <p className="text-xs text-muted-foreground italic border-l-2 border-primary pl-2">
+                    {template.matchReason}
+                  </p>
+                )}
+
                 {/* Description */}
                 <p className="text-sm text-muted-foreground line-clamp-2">
                   {template.description}
                 </p>
+
+                {/* Pain Points Box */}
+                {template.pain && (
+                  <div className="p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                    <p className="text-xs font-medium text-amber-900 dark:text-amber-100 mb-1">
+                      🎯 Resuelve:
+                    </p>
+                    <p className="text-xs text-amber-800 dark:text-amber-200">
+                      {template.pain}
+                    </p>
+                  </div>
+                )}
 
                 {/* Anonymous Metrics */}
                 {template.metrics && (

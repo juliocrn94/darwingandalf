@@ -6,6 +6,9 @@ verify_jwt = false
 [functions.recommend-templates]
 verify_jwt = false
 
+[functions.seed-templates]
+verify_jwt = false
+
 [functions.test-agent]
 verify_jwt = false
 

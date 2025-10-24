@@ -52,12 +52,20 @@ serve(async (req) => {
       // Continuar sin datos de HubSpot
     }
 
-    // Obtener todos los agentes
+    // Obtener solo templates (agentes marcados como templates)
     const { data: agents, error: agentsError } = await supabase
       .from("agents")
-      .select("*");
+      .select("*")
+      .eq("is_template", true);
 
     if (agentsError) throw agentsError;
+    
+    if (!agents || agents.length === 0) {
+      return new Response(
+        JSON.stringify({ templates: [] }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Calcular scores de match usando Lovable AI
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -76,7 +84,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `Analiza qué tan bien cada agente se ajusta al caso de uso del discovery y los deals de HubSpot.
+            content: `Analiza qué tan bien cada template de agente se ajusta al caso de uso del discovery y los deals de HubSpot.
 
 Discovery data: ${JSON.stringify(discoveryData)}
 
@@ -90,19 +98,29 @@ HubSpot deals data (industrias, stages, companies): ${JSON.stringify(
   }))
 )}
 
-Agents disponibles: ${JSON.stringify(agents?.map(a => ({ 
+Templates disponibles: ${JSON.stringify(agents?.map(a => ({ 
   id: a.id, 
   name: a.name, 
   industry: a.industry, 
-  description: a.description 
+  description: a.description,
+  workers_goals: a.workers_goals,
+  pain: a.pain,
+  integrations: a.integrations,
+  qualification_criteria: a.qualification_criteria
 })))}
 
-Considera:
-1. Match con el propósito del discovery
-2. Similitud con industrias de los deals de HubSpot
-3. Casos de uso similares en deals activos
+IMPORTANTE - Algoritmo de matching (peso total 100%):
+1. **40% - Pain Points Match**: ¿Qué tan bien los pain points del template coinciden con los problemas identificados en el discovery?
+2. **30% - Workers Goals vs Purpose**: ¿Qué tan alineados están los workers_goals del template con el proposedAgentPurpose del discovery?
+3. **20% - Integrations Match**: ¿Las integraciones del template coinciden con las necesidades/sistemas mencionados en discovery o deals de HubSpot?
+4. **10% - Industry Similarity**: ¿Qué tan similar es la industria del template con la industria del cliente?
 
-Devuelve un ranking de agentes con scores del 0-100.`
+Considera también:
+- Datos del discovery: companyDescription, proposedAgentPurpose, painPoints, currentIntegrations
+- Industrias y características de los deals activos en HubSpot
+- Qualification criteria del template vs necesidades de calificación del cliente
+
+Devuelve un ranking de templates con scores del 0-100, explicando brevemente por qué cada uno tiene ese score.`
           },
           {
             role: "user",
@@ -123,8 +141,16 @@ Devuelve un ranking de agentes con scores del 0-100.`
                     type: "object",
                     properties: {
                       agentId: { type: "string" },
-                      matchScore: { type: "number" }
-                    }
+                      matchScore: { 
+                        type: "number",
+                        description: "Score 0-100 based on the matching algorithm weights"
+                      },
+                      reason: {
+                        type: "string",
+                        description: "Brief explanation of why this template got this score"
+                      }
+                    },
+                    required: ["agentId", "matchScore", "reason"]
                   }
                 }
               }
@@ -148,12 +174,15 @@ Devuelve un ranking de agentes con scores del 0-100.`
       rankings = parsedArgs.rankings || [];
     }
 
-    // Agregar métricas anónimas simuladas y match scores
+    // Agregar métricas anónimas simuladas y match scores from AI
     const templatesWithMetrics = agents?.map(agent => {
       const ranking = rankings.find(r => r.agentId === agent.id);
+      const baseScore = ranking?.matchScore || Math.floor(Math.random() * 30) + 60;
+      
       return {
         ...agent,
-        matchScore: ranking?.matchScore || Math.floor(Math.random() * 30) + 60, // 60-90%
+        matchScore: Math.min(100, Math.max(0, baseScore)), // Ensure 0-100 range
+        matchReason: ranking?.reason || "Template general para esta industria",
         metrics: {
           averageConversion: Math.floor(Math.random() * 20) + 70, // 70-90%
           averageSatisfaction: (Math.random() * 1 + 4).toFixed(1), // 4.0-5.0

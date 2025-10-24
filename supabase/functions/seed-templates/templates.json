@@ -1,0 +1,107 @@
+[
+  {
+    "industry": "Marketing",
+    "workers_goals": "Carma Digital usará IA para su propia captación (Alba-Carma) y también para un proyecto inmobiliario donde operan como contact center (Alba-Inmobiliaria). \nCada flujo trabaja con su número de WhatsApp y su pipeline en HubSpot.\n\nAlba (Carma):\n- Atender leads por WhatsApp sobre servicios de marketing (Paid Media, Social/Content, SEO, Web/LP, Automation/CRM, Branding).\n- Calificar dolor y encaje (objetivo, canales actuales, presupuesto, timing, rol).\n- Crear/actualizar Contact + Deal en HubSpot, asignar owner, etapa y próximo paso (llamada/diagnóstico/demo).\n- Enviar credenciales/casos y coordinar reunión con el ejecutivo.\n- Límites: no prometer precios/SLAs/resultados; negociaciones → comercial.\n\nAlba (Inmobiliaria):\n- Atender por WhatsApp leads de compra/arrendo/venta.\n- Identificar proyecto desde Google Sheets (6 proyectos), enviar ficha/enlace.\n- Calificar (zona, presupuesto/forma de pago, tipología, horizonte, visita).\n- Crear/actualizar Contact + Deal en HubSpot (pipeline Inmobiliario) con proyecto y próximo paso.\n- Tomar día/franja preferidos para visita (confirmación final la hace el agente).\n- Límites: sin confirmar tasación/crédito/disponibilidad final; derivar a agente.",
+    "integrations": "Yes - Hubspot",
+    "qualification_criteria": "Alba (Carma):\nObligatorios:\n- ¿Qué servicio te interesa?\n- ¿Cuál es tu objetivo principal?\n- ¿Cuál es tu presupuesto mensual aprox.?\n- ¿Para cuándo te gustaría empezar?\n- ¿Cuál es tu rol?\nDatos: Nombre, Empresa, Whats/email\n\nAlba (Inmobiliaria):\nObligatorios:\n- ¿Buscás comprar o arrendar?\n- ¿Qué proyecto te interesa?\n- ¿En qué comuna/sector?\n- ¿Cuál es tu presupuesto o forma de pago?\n- ¿Para cuándo te gustaría mudarte?\n- ¿Querés coordinar visita?\nDatos: Nombre y WhatsApp",
+    "pain": "La atención humana es pésima para cobranzas. No pueden hacer más campañas por saturación del equipo comercial."
+  },
+  {
+    "industry": "Retail",
+    "workers_goals": "Alba:\n- Debe recomendar productos según solicitud del cliente (3 niveles de complejidad).\nSophia:\n- Apoya en postventa: cambios, reparaciones, seguimiento de envíos.\n\nIntegración obligatoria con VTEX y Salesforce.",
+    "integrations": "VTEX y Salesforce",
+    "qualification_criteria": "Alba:\n- Saludo amable y asesoramiento según necesidad (hogar o profesional).\nSophia:\n- Resolución de devoluciones, seguimientos, soporte técnico.",
+    "pain": "Hacen todo manual."
+  },
+  {
+    "industry": "Real State",
+    "workers_goals": "Calificar al cliente y eventualmente agendar una reunión. \nTiene un proceso definido y aún no decide si quiere que agenden o no.",
+    "integrations": "Zoho CRM",
+    "qualification_criteria": "Datos básicos: nombre, teléfono, correo. \nDetalles del cliente: tipo de propiedad, presupuesto, necesidades, tiempo buscando.\nInformación adicional: crédito aprobado, estado del interés.",
+    "pain": "Muchos leads no responden tras el primer contacto; buscan automatizar seguimiento."
+  },
+  {
+    "industry": "Automotive",
+    "workers_goals": "EVA — soporte y derivación de solicitudes de transporte y flete por WhatsApp o llamadas.\nSOFÍA — postventa (operación y soporte).",
+    "integrations": "CRM propio de Grupo Platino",
+    "qualification_criteria": "Eva: datos de carga, origen, destino, empresa, contacto.\nSofía: datos de envío, referencia, motivo, prioridad.",
+    "pain": "Respuesta lenta, leads sin atender, derivaciones erróneas y falta de control."
+  },
+  {
+    "industry": "Automotive",
+    "workers_goals": "Confirmar interés y forma de pago, resolver dudas básicas y avanzar el lead (test drive, cotización, etc.).",
+    "integrations": "Calendario",
+    "qualification_criteria": "Validar interés, forma de pago (contado o plan), presupuesto y plazo de compra.",
+    "pain": "Cuello de botella en el tiempo de respuesta."
+  },
+  {
+    "industry": "Retail",
+    "workers_goals": "Alba:\n- Detectar pedido de catálogo, enviar link/lista o PDF.\n- Capturar datos de presupuesto y armar cotización preliminar.\n- Responder FAQs (pagos, entregas, garantías) y escalar cuando sea técnico.",
+    "integrations": "Odoo (Zapier)",
+    "qualification_criteria": "Obligatorios: categoría, formato, SKU, cantidad, talla, norma, ciudad.\nRegistro en Odoo: oportunidad o cotización según tipo de solicitud.",
+    "pain": "Muchos contactos no pueden atender con el equipo humano actual."
+  },
+  {
+    "industry": "Software",
+    "workers_goals": "Worker AI debe identificar necesidad y derivar a soporte, ventas o área financiera.",
+    "integrations": "Clienty (ventas) + sistema propio de soporte",
+    "qualification_criteria": "Detectar intención (soporte, compra o pago).",
+    "pain": "Muchos tickets sin atención, procesos manuales y falta de automatización."
+  },
+  {
+    "industry": "Real State",
+    "workers_goals": "Atender leads de campañas, compartir opciones de inmuebles, generar visitas y agendar con Rocío.\nBruno hace campañas outbound.",
+    "integrations": "Google Calendar, sitio web",
+    "qualification_criteria": "Tipo de inmueble, habitaciones, m2, presupuesto, tiempo de búsqueda.",
+    "pain": "Necesitan automatizar tareas y atención multicanal."
+  },
+  {
+    "industry": "Real State",
+    "workers_goals": "Desarrollo de dos Alba para proyectos distintos con números de WhatsApp separados.",
+    "integrations": "No aún",
+    "qualification_criteria": "En definición antes del pago.",
+    "pain": "Pendiente de definición del flujo final."
+  },
+  {
+    "industry": "Real State",
+    "workers_goals": "Atender leads, informar sobre inmuebles y agendar visitas. \nCrear eventos en Google Calendar y registrar en Sheets.",
+    "integrations": "Google Calendar, Google Sheets, correo electrónico",
+    "qualification_criteria": "Inmueble, tipo de vivienda, presupuesto, m², dormitorios, barrio.",
+    "pain": "Hacen todo manual y desean escalar automatizando leads."
+  },
+  {
+    "industry": "Automotive",
+    "workers_goals": "Asistente virtual que cubra todo el ciclo comercial (lead → cobranza). \nIncluye recepción, calificación, CRM/ERP, agendamiento, recordatorios y postventa.",
+    "integrations": "CRM y ERP propios",
+    "qualification_criteria": "Flujo completo de lead → calificación → derivación → agendamiento → seguimiento.",
+    "pain": "Pierden ventas por mala filtración y tiempos de respuesta lentos."
+  },
+  {
+    "industry": "Automotive",
+    "workers_goals": "Alba (pre-ventas), Bruno (outbound) y Sofía (postventa). \nAtención de leads, reactivación, citas de servicio y registro en planillas piloto.",
+    "integrations": "No en esta etapa",
+    "qualification_criteria": "Datos del cliente, intención, modelo, sucursal, horizonte y registro en planillas.",
+    "pain": "Atención limitada al horario comercial y chatbot deficiente."
+  },
+  {
+    "industry": "Automotive",
+    "workers_goals": "Alba, Bruno y Sofía. \nAtender 0 km, seminuevos, financiación y servicio. \nRegistrar todo en SICOP.",
+    "integrations": "SICOP",
+    "qualification_criteria": "Datos básicos, intención, modelo, sucursal, horizonte, forma de pago.",
+    "pain": "Procesos manuales previos y falta de automatización completa."
+  },
+  {
+    "industry": "Real State",
+    "workers_goals": "Alba: atender servicio de florería para clientes de cementerio. \nDebe asesorar, ofrecer planes y acompañar en el proceso.",
+    "integrations": "Catálogo (sin API por ahora)",
+    "qualification_criteria": "1. Saludo y empatía.\n2. Confirmar intención (florería).\n3. Ofrecer opciones (único, mensual, semanal, fechas importantes).\n4. Calificar: nombre del difunto, ubicación, tipo de servicio.\n5. Upsell: accesorios o limpieza.",
+    "pain": "Procesos manuales y falta de proactividad en atención."
+  },
+  {
+    "industry": "Real State",
+    "workers_goals": "Alba (pre-ventas): captar inmobiliarias y brokers para Kutt. \nSofía (postventa): soporte N1 y onboarding. \nLucas: cobranza.",
+    "integrations": "ERP interno y CRM Escala",
+    "qualification_criteria": "Alba: detectar interés, clasificar segmento (ultra light → gold), recomendar plan y agendar demo.\nSofía: bienvenida, seguimiento, resolución, educación, retención.\nLucas: pagos pendientes y asistencia.",
+    "pain": "Falta de seguimiento, leads desatendidos y gestión manual de redes sociales."
+  }
+]

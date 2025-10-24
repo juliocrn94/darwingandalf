@@ -22,11 +22,16 @@ export type Database = {
           examples_count: number | null
           id: string
           industry: string
+          integrations: string | null
           intents: Json | null
+          is_template: boolean | null
           mission: string
           name: string
+          pain: string | null
+          qualification_criteria: string | null
           slots_count: number | null
           updated_at: string | null
+          workers_goals: string | null
         }
         Insert: {
           context?: string | null
@@ -35,11 +40,16 @@ export type Database = {
           examples_count?: number | null
           id?: string
           industry: string
+          integrations?: string | null
           intents?: Json | null
+          is_template?: boolean | null
           mission: string
           name: string
+          pain?: string | null
+          qualification_criteria?: string | null
           slots_count?: number | null
           updated_at?: string | null
+          workers_goals?: string | null
         }
         Update: {
           context?: string | null
@@ -48,11 +58,16 @@ export type Database = {
           examples_count?: number | null
           id?: string
           industry?: string
+          integrations?: string | null
           intents?: Json | null
+          is_template?: boolean | null
           mission?: string
           name?: string
+          pain?: string | null
+          qualification_criteria?: string | null
           slots_count?: number | null
           updated_at?: string | null
+          workers_goals?: string | null
         }
         Relationships: []
       }
